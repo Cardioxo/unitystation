@@ -7,8 +7,8 @@ public class CPRable : MonoBehaviour, IClientInteractable<PositionalHandApply>
 {
 	public bool Interact(PositionalHandApply interaction)
 	{
-		var targetPlayerHealth = interaction.TargetObject.GetComponent<PlayerHealthSystem>();
-		var performerPlayerHealth = interaction.Performer.GetComponent<PlayerHealthSystem>();
+		var targetPlayerHealth = interaction.TargetObject.GetComponent<OrganicHealthSystem>();
+		var performerPlayerHealth = interaction.Performer.GetComponent<OrganicHealthSystem>();
 		var performerRegisterPlayer = interaction.Performer.GetComponent<RegisterPlayer>();
 
 		// Is the target in range for CPR? Is the target unconscious? Is the intent set to help? Is the target a player?

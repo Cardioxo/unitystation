@@ -411,6 +411,36 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	}
 
 
+	public BodyPartBehaviour FindBodyPart(BodyPartType bodyPartAim)
+	{
+		int searchIndex = BodyParts.FindIndex(x => x.Type == bodyPartAim);
+		if (searchIndex != -1)
+		{
+			return BodyParts[searchIndex];
+		}
+		//If nothing is found then try to find a chest component:
+		searchIndex = BodyParts.FindIndex(x => x.Type == BodyPartType.Chest);
+		if (searchIndex != -1)
+		{
+			return BodyParts[searchIndex];
+		}
+		// else nothing:
+		return null;
+	}
+
+	/// <summary>
+	/// Reset all body part damage.
+	/// </summary>
+	[Server]
+	private void ResetBodyParts()
+	{
+		foreach (BodyPartBehaviour bodyPart in BodyParts)
+		{
+			bodyPart.RestoreDamage();
+			bodyPart.healthSystem = this;
+		}
+	}
+	
 	public void OnExposed(FireExposure exposure)
 	{
 		Profiler.BeginSample("PlayerExpose");
@@ -423,7 +453,7 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	/// ---------------------------
 
 	//Handled via UpdateManager
-	void UpdateMe()
+	protected virtual void UpdateMe()
 	{
 		//Server Only:
 		if (isServer && !IsDead)
@@ -481,7 +511,7 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	/// Recalculates the overall player health and updates OverallHealth property. Server only
 	/// </summary>
 	[Server]
-	public void CalculateOverallHealth()
+	protected virtual void CalculateOverallHealth()
 	{
 		float newHealth = 100;
 		newHealth -= CalculateOverallBodyPartDamage();
@@ -588,7 +618,7 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	/// Checks if the player's health has changed such that consciousstate needs to be changed,
 	/// and changes consciousstate and invokes whatever needs to be invoked when the state changes
 	/// </summary>
-	private void CheckHealthAndUpdateConsciousState()
+	protected virtual void CheckHealthAndUpdateConsciousState()
 	{
 		if (ConsciousState != ConsciousState.CONSCIOUS && bloodSystem.OxygenDamage < HealthThreshold.OxygenPassOut && OverallHealth > HealthThreshold.SoftCrit)
 		{
@@ -721,36 +751,6 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 
 		//never destroy players!
 		Despawn.ServerSingle(gameObject);
-	}
-
-	public BodyPartBehaviour FindBodyPart(BodyPartType bodyPartAim)
-	{
-		int searchIndex = BodyParts.FindIndex(x => x.Type == bodyPartAim);
-		if (searchIndex != -1)
-		{
-			return BodyParts[searchIndex];
-		}
-		//If nothing is found then try to find a chest component:
-		searchIndex = BodyParts.FindIndex(x => x.Type == BodyPartType.Chest);
-		if (searchIndex != -1)
-		{
-			return BodyParts[searchIndex];
-		}
-		// else nothing:
-		return null;
-	}
-
-	/// <summary>
-	/// Reset all body part damage.
-	/// </summary>
-	[Server]
-	private void ResetBodyParts()
-	{
-		foreach (BodyPartBehaviour bodyPart in BodyParts)
-		{
-			bodyPart.RestoreDamage();
-			bodyPart.healthSystem = this;
-		}
 	}
 
 	private void OnDrawGizmos()

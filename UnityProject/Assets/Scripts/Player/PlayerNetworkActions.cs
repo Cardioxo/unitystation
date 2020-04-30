@@ -122,7 +122,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 				playerScript.playerMove.Unbuckle();
 			}
 		}
-		else if (playerScript.PlayerHealthSystem.FireStacks > 0) // Check if we are on fire. If we are perform a stop-drop-roll animation and reduce the fire stacks.
+		else if (playerScript.OrganicHealthSystem.FireStacks > 0) // Check if we are on fire. If we are perform a stop-drop-roll animation and reduce the fire stacks.
 		{
 			if (!playerScript.registerTile.IsLayingDown)
 			{
@@ -133,7 +133,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 			else
 			{
 				// Remove 5 stacks(?) per roll action.
-				playerScript.PlayerHealthSystem.ChangeFireStacks(-5.0f);
+				playerScript.OrganicHealthSystem.ChangeFireStacks(-5.0f);
 				// Find the next in the roll sequence. Also unlock the facing direction temporarily since ServerStun locks it.
 				playerScript.playerDirectional.LockDirection = false;
 				Orientation faceDir = playerScript.playerDirectional.CurrentDirection;
@@ -159,9 +159,9 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 				playerScript.playerDirectional.LockDirection = true;
 			}
 
-			if (playerScript.PlayerHealthSystem.FireStacks <= 0)
+			if (playerScript.OrganicHealthSystem.FireStacks <= 0)
 			{
-				playerScript.PlayerHealthSystem.Extinguish();
+				playerScript.OrganicHealthSystem.Extinguish();
 			}
 		}
 		else if (playerScript.playerMove.IsCuffed) // Check if cuffed.
@@ -439,8 +439,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	public void CmdToggleChatIcon(bool turnOn, string message, ChatChannel chatChannel, ChatModifier chatModifier)
 	{
 		if (!playerScript.pushPull.VisibleState || (playerScript.mind.occupation.JobType == JobType.NULL)
-												|| playerScript.PlayerHealthSystem.IsDead || playerScript.PlayerHealthSystem.IsCrit
-												|| playerScript.PlayerHealthSystem.IsCardiacArrest)
+												|| playerScript.OrganicHealthSystem.IsDead || playerScript.OrganicHealthSystem.IsCrit
+												|| playerScript.OrganicHealthSystem.IsCardiacArrest)
 		{
 			//Don't do anything with chat icon if player is invisible or not spawned in
 			//This will also prevent clients from snooping other players local chat messages that aren't visible to them
@@ -678,7 +678,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[Server]
 	private void DoCPR(GameObject rescuer, GameObject CardiacArrestPlayer)
 	{
-		CardiacArrestPlayer.GetComponent<PlayerHealthSystem>().bloodSystem.oxygenDamage -= 7f;
+		CardiacArrestPlayer.GetComponent<OrganicHealthSystem>().bloodSystem.oxygenDamage -= 7f;
 
 		Chat.AddActionMsgToChat(rescuer, $"You have performed CPR on {CardiacArrestPlayer.Player()?.Name}.",
 			$"{rescuer.Player()?.Name} has performed CPR on {CardiacArrestPlayer.Player()?.Name}.");

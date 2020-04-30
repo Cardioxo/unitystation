@@ -18,7 +18,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 	[Tooltip("What body parts does this item protect")]
 	private BodyPartsCovered bodyPartsCovered = BodyPartsCovered.None;
 
-	private PlayerHealthSystem player;
+	private OrganicHealthSystem organic;
 	private Armor armor;
 
 	public void Awake()
@@ -31,9 +31,9 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 		//Wearing
 		if (info.ToSlot != null & info.ToSlot?.NamedSlot != null)
 		{
-			player = info.ToRootPlayer?.PlayerScript.PlayerHealthSystem;
+			organic = info.ToRootPlayer?.PlayerScript.OrganicHealthSystem;
 
-			if (player != null && info.ToSlot.NamedSlot == slot)
+			if (organic != null && info.ToSlot.NamedSlot == slot)
 			{
 				UpdateBodyPartsArmor();
 			}
@@ -41,9 +41,9 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 		//taking off
 		if (info.FromSlot != null & info.FromSlot?.NamedSlot != null)
 		{
-			player = info.FromRootPlayer?.PlayerScript.PlayerHealthSystem;
+			organic = info.FromRootPlayer?.PlayerScript.OrganicHealthSystem;
 
-			if (player != null && info.FromSlot.NamedSlot == slot)
+			if (organic != null && info.FromSlot.NamedSlot == slot)
 			{
 				UpdateBodyPartsArmor(remove: true);
 			}
@@ -60,7 +60,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 			}
 
 			var bodyPart = bodyParts[coveredPart];
-			foreach (var part in player.BodyParts.Where(part => part.Type == bodyPart))
+			foreach (var part in organic.BodyParts.Where(part => part.Type == bodyPart))
 			{
 				if (remove)
 				{

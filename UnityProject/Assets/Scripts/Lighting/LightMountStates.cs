@@ -97,7 +97,7 @@ public class LightMountStates : NetworkBehaviour, ICheckedInteractable<HandApply
 			    !Validations.HasItemTrait(interaction.PerformerPlayerScript.Equipment.GetClothingItem(NamedSlot.hands).GameObjectReference, CommonTraits.Instance.BlackGloves))
 			{
 
-				interaction.PerformerPlayerScript.PlayerHealthSystem.ApplyDamageToBodypart(gameObject, 10f, AttackType.Energy, DamageType.Burn,
+				interaction.PerformerPlayerScript.OrganicHealthSystem.ApplyDamageToBodypart(gameObject, 10f, AttackType.Energy, DamageType.Burn,
 					interaction.HandSlot.NamedSlot == NamedSlot.leftHand ? BodyPartType.LeftArm : BodyPartType.RightArm);
 				Chat.AddExamineMsgFromServer(performer, $"<color=red>You burn your hand while attempting to remove the light</color>");
 				return;

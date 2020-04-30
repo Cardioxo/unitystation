@@ -95,7 +95,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 		if (!playerMove.allowInput ||
 			playerScript.IsGhost ||
 			!victim ||
-			!playerScript.PlayerHealthSystem.serverPlayerConscious
+			!playerScript.OrganicHealthSystem.serverPlayerConscious
 		)
 		{
 			return;
@@ -245,7 +245,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 	[Command]
 	private void CmdRequestInputActivation()
 	{
-		if (playerScript.PlayerHealthSystem.serverPlayerConscious)
+		if (playerScript.OrganicHealthSystem.serverPlayerConscious)
 		{
 			playerMove.allowInput = true;
 		}

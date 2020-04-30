@@ -56,9 +56,9 @@ public class AdminPlayerListRefreshMessage : ServerMessage
 			if (player.Connection != null)
 			{
 				entry.ipAddress = player.Connection.address;
-				if (player.Script != null && player.Script.PlayerHealthSystem != null)
+				if (player.Script != null && player.Script.OrganicHealthSystem != null)
 				{
-					entry.isAlive = player.Script.PlayerHealthSystem.ConsciousState != ConsciousState.DEAD;
+					entry.isAlive = player.Script.OrganicHealthSystem.ConsciousState != ConsciousState.DEAD;
 				}
 				else
 				{

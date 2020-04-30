@@ -264,7 +264,7 @@ public class CargoManager : MonoBehaviour
 		var playerScript = item.GetComponent<PlayerScript>();
 		if (playerScript != null)
 		{
-			playerScript.PlayerHealthSystem.ServerGibPlayer();
+			playerScript.OrganicHealthSystem.ServerGibPlayer();
 		}
 
 		item.registerTile.UnregisterClient();

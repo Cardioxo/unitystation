@@ -7,8 +7,8 @@ public class Huggable : MonoBehaviour, IClientInteractable<PositionalHandApply>
 {
 	public bool Interact(PositionalHandApply interaction)
 	{
-		var targetPlayerHealth = interaction.TargetObject.GetComponent<PlayerHealthSystem>();
-		var performerPlayerHealth = interaction.Performer.GetComponent<PlayerHealthSystem>();
+		var targetPlayerHealth = interaction.TargetObject.GetComponent<OrganicHealthSystem>();
+		var performerPlayerHealth = interaction.Performer.GetComponent<OrganicHealthSystem>();
 		var performerRegisterPlayer = interaction.Performer.GetComponent<RegisterPlayer>();
 
 		// Is the target in range for a hug? Is the target conscious for the hug? Is the performer's intent set to help?

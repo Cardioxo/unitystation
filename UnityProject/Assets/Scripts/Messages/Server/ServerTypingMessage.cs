@@ -30,8 +30,8 @@ public class ServerTypingMessage : ServerMessage
 		var showTyping = state == TypingState.TYPING;
 
 		// check if player is conscious before generating typing icon
-		bool isPlayerConscious = (player.PlayerHealthSystem.ConsciousState == ConsciousState.CONSCIOUS ||
-								  player.PlayerHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS);
+		bool isPlayerConscious = (player.OrganicHealthSystem.ConsciousState == ConsciousState.CONSCIOUS ||
+								  player.OrganicHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS);
 		if (isPlayerConscious)
 		{
 			icon.ToggleTypingIcon(showTyping);

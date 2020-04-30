@@ -63,7 +63,7 @@ public class RestraintOverlay : ClothingItem, IActionGUI
 			StopCoroutine(uncuffCoroutine);
 
 		float resistTime = GameObjectReference.GetComponent<Restraint>().ResistTime;
-		healthCache = thisPlayerScript.PlayerHealthSystem.OverallHealth;
+		healthCache = thisPlayerScript.OrganicHealthSystem.OverallHealth;
 		positionCache = thisPlayerScript.registerTile.LocalPositionServer;
 		if (!CanUncuff()) return;
 
@@ -100,12 +100,12 @@ public class RestraintOverlay : ClothingItem, IActionGUI
 
 	private bool CanUncuff()
 	{
-		PlayerHealthSystem playerHealthSystem = thisPlayerScript.PlayerHealthSystem;
+		OrganicHealthSystem organicHealthSystem = thisPlayerScript.OrganicHealthSystem;
 
-		if (playerHealthSystem == null ||
-			playerHealthSystem.ConsciousState == ConsciousState.DEAD ||
-			playerHealthSystem.ConsciousState == ConsciousState.UNCONSCIOUS ||
-			playerHealthSystem.OverallHealth != healthCache ||
+		if (organicHealthSystem == null ||
+			organicHealthSystem.ConsciousState == ConsciousState.DEAD ||
+			organicHealthSystem.ConsciousState == ConsciousState.UNCONSCIOUS ||
+			organicHealthSystem.OverallHealth != healthCache ||
 			thisPlayerScript.registerTile.IsSlippingServer ||
 			positionCache != thisPlayerScript.registerTile.LocalPositionServer)
 		{

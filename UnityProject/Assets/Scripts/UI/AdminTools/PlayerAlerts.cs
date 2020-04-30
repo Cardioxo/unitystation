@@ -166,13 +166,13 @@ namespace AdminTools
 			if (alertEntry.gibbed) return;
 
 			var playerScript = perp.GetComponent<PlayerScript>();
-			if (playerScript == null || playerScript.IsGhost || playerScript.PlayerHealthSystem == null) return;
+			if (playerScript == null || playerScript.IsGhost || playerScript.OrganicHealthSystem == null) return;
 
 			UIManager.Instance.adminChatWindows.adminToAdminChat.ServerAddChatRecord($"{admin.ExpensiveName()} BRUTALLY GIBBED player {perp.ExpensiveName()} for a " +
 			                                                                         $"{alertEntry.playerAlertType.ToString()} incident that happened at roundtime: " +
 			                                                                         $"{alertEntry.roundTime}", adminId);
 
-			playerScript.PlayerHealthSystem.ServerGibPlayer();
+			playerScript.OrganicHealthSystem.ServerGibPlayer();
 
 			alertEntry.gibbed = true;
 			ServerSendEntryToAllAdmins(alertEntry);
@@ -185,7 +185,7 @@ namespace AdminTools
 			if (alertEntry.takenCareOf) return;
 
 			var playerScript = perp.GetComponent<PlayerScript>();
-			if (playerScript == null || playerScript.IsGhost || playerScript.PlayerHealthSystem == null) return;
+			if (playerScript == null || playerScript.IsGhost || playerScript.OrganicHealthSystem == null) return;
 
 			UIManager.Instance.adminChatWindows.adminToAdminChat.ServerAddChatRecord($"{admin.ExpensiveName()} is talking to or monitoring player {perp.ExpensiveName()} for a " +
 			                                                                         $"{alertEntry.playerAlertType.ToString()} incident that happened at roundtime: " +

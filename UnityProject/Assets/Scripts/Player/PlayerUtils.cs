@@ -50,7 +50,7 @@ public static class PlayerUtils
 			{
 				//love clown
 				ps.playerMove.Uncuff();
-				foreach (var bodyPart in ps.PlayerHealthSystem.BodyParts)
+				foreach (var bodyPart in ps.OrganicHealthSystem.BodyParts)
 				{
 					bodyPart.HealDamage(200, DamageType.Brute);
 					bodyPart.HealDamage(200, DamageType.Burn);

@@ -344,7 +344,7 @@ public class PlayerMove : NetworkBehaviour, IRightClickable, IServerSpawn, IActi
 		//we can be pushed / pulled again
 		PlayerScript.pushPull.ServerSetPushable(true);
 		//decide if we should fall back down when unbuckled
-		registerPlayer.ServerSetIsStanding(PlayerScript.PlayerHealthSystem.ConsciousState == ConsciousState.CONSCIOUS);
+		registerPlayer.ServerSetIsStanding(PlayerScript.OrganicHealthSystem.ConsciousState == ConsciousState.CONSCIOUS);
 		onUnbuckled?.Invoke();
 		if (previouslyBuckledTo)
 		{
@@ -440,12 +440,12 @@ public class PlayerMove : NetworkBehaviour, IRightClickable, IServerSpawn, IActi
 
 	private bool CanUnBuckleSelf()
 	{
-		PlayerHealthSystem playerHealthSystem = playerScript.PlayerHealthSystem;
+		OrganicHealthSystem organicHealthSystem = playerScript.OrganicHealthSystem;
 
-		return !(playerHealthSystem == null ||
-		         playerHealthSystem.ConsciousState == ConsciousState.DEAD ||
-		         playerHealthSystem.ConsciousState == ConsciousState.UNCONSCIOUS ||
-		         playerHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS);
+		return !(organicHealthSystem == null ||
+		         organicHealthSystem.ConsciousState == ConsciousState.DEAD ||
+		         organicHealthSystem.ConsciousState == ConsciousState.UNCONSCIOUS ||
+		         organicHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS);
 	}
 
 	[Server]

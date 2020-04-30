@@ -73,9 +73,9 @@ public partial class Chat
 			return (message, chatModifiers);
 		}
 
-		if (sentByPlayer.Script.PlayerHealthSystem != null)
+		if (sentByPlayer.Script.OrganicHealthSystem != null)
 		{
-			playerConsciousState = sentByPlayer.Script.PlayerHealthSystem.ConsciousState;
+			playerConsciousState = sentByPlayer.Script.OrganicHealthSystem.ConsciousState;
 		}
 
 		if (playerConsciousState == ConsciousState.UNCONSCIOUS || playerConsciousState == ConsciousState.DEAD)
