@@ -41,7 +41,7 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	[Tooltip("For mobs that can breath in any atmos environment")]
 	public bool canBreathAnywhere = false;
 
-	public float OverallHealth { get; private set; } = 100;
+	public float OverallHealth { get; protected set; } = 100;
 	public float cloningDamage;
 
 	/// <summary>
@@ -464,23 +464,30 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 				tick = 0f;
 				if (fireStacks > 0)
 				{
-					//TODO: Burn clothes (see species.dm handle_fire)
-					ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Internal, DamageType.Burn);
-					//gradually deplete fire stacks
-					SyncFireStacks(fireStacks, fireStacks-0.1f);
-					//instantly stop burning if there's no oxygen at this location
-					MetaDataNode node = registerTile.Matrix.MetaDataLayer.Get(registerTile.LocalPositionClient);
-					if (node.GasMix.GetMoles(Gas.Oxygen) < 1)
-					{
-						SyncFireStacks(fireStacks, 0);
-					}
-					registerTile.Matrix.ReactionManager.ExposeHotspotWorldPosition(gameObject.TileWorldPosition(), BURNING_HOTSPOT_TEMPERATURE, BURNING_HOTSPOT_VOLUME);
+					HandleFireDamage();
 				}
 
 				CalculateOverallHealth();
 				CheckHealthAndUpdateConsciousState();
 			}
 		}
+	}
+
+	protected void HandleFireDamage()
+	{
+		//TODO: Burn clothes (see species.dm handle_fire)
+		ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Internal, DamageType.Burn);
+		//gradually deplete fire stacks
+		SyncFireStacks(fireStacks, fireStacks - 0.1f);
+		//instantly stop burning if there's no oxygen at this location
+		MetaDataNode node = registerTile.Matrix.MetaDataLayer.Get(registerTile.LocalPositionClient);
+		if (node.GasMix.GetMoles(Gas.Oxygen) < 1)
+		{
+			SyncFireStacks(fireStacks, 0);
+		}
+
+		registerTile.Matrix.ReactionManager.ExposeHotspotWorldPosition(gameObject.TileWorldPosition(),
+			BURNING_HOTSPOT_TEMPERATURE, BURNING_HOTSPOT_VOLUME);
 	}
 
 
@@ -650,6 +657,10 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 
 	protected abstract void OnDeathActions();
 
+	protected void RaiseDeathNotifyEvent()
+	{
+		OnDeathNotifyEvent?.Invoke();
+	}
 	// --------------------
 	// UPDATES FROM SERVER
 	// --------------------
