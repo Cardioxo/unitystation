@@ -25,13 +25,13 @@ public class HealsTheLiving : MonoBehaviour, ICheckedInteractable<HandApply>
 	{
 		if (!DefaultWillInteract.Default(interaction, side)) return false;
 		//can only be applied to LHB
-		if (!Validations.HasComponent<LivingHealthBehaviour>(interaction.TargetObject)) return false;
+		if (!Validations.HasComponent<HealthSystem>(interaction.TargetObject)) return false;
 		return true;
 	}
 
 	public void ServerPerformInteraction(HandApply interaction)
 	{
-		var LHB = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var LHB = interaction.TargetObject.GetComponent<HealthSystem>();
 		if (LHB.IsDead)
 		{
 			return;
@@ -59,9 +59,9 @@ public class HealsTheLiving : MonoBehaviour, ICheckedInteractable<HandApply>
 		targetBodyPart.HealDamage(40, healType);
 		stackable.ServerConsume(1);
 
-		HealthBodyPartMessage.Send(targetBodyPart.livingHealthBehaviour.gameObject, targetBodyPart.livingHealthBehaviour.gameObject,
-			targetBodyPart.Type, targetBodyPart.livingHealthBehaviour.GetTotalBruteDamage(),
-			targetBodyPart.livingHealthBehaviour.GetTotalBurnDamage());
+		HealthBodyPartMessage.Send(targetBodyPart.healthSystem.gameObject, targetBodyPart.healthSystem.gameObject,
+			targetBodyPart.Type, targetBodyPart.healthSystem.GetTotalBruteDamage(),
+			targetBodyPart.healthSystem.GetTotalBurnDamage());
 	}
 
 	private void ServerSelfHeal(GameObject originator, BodyPartBehaviour targetBodyPart)

@@ -16,7 +16,7 @@ public class HealthBloodMessage : ServerMessage
 	public override void Process()
 	{
 		LoadNetworkObject(EntityToUpdate);
-		NetworkObject.GetComponent<LivingHealthBehaviour>().UpdateClientBloodStats(HeartRate, BloodLevel, OxygenDamage, ToxinLevel);
+		NetworkObject.GetComponent<HealthSystem>().UpdateClientBloodStats(HeartRate, BloodLevel, OxygenDamage, ToxinLevel);
 	}
 
 	public static HealthBloodMessage Send(GameObject recipient, GameObject entityToUpdate, int heartRate, float bloodLevel,

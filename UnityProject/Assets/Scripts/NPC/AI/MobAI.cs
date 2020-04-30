@@ -14,7 +14,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 	protected MobFollow mobFollow;
 	protected MobExplore mobExplore;
 	protected MobFlee mobFlee;
-	protected LivingHealthBehaviour health;
+	protected HealthSystem HealthSystem;
 	protected NPCDirectionalSprites dirSprites;
 	protected CustomNetTransform cnt;
 	protected RegisterObject registerObject;
@@ -53,16 +53,16 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		}
 	}
 
-	public bool IsDead => health.IsDead;
+	public bool IsDead => HealthSystem.IsDead;
 
-	public bool IsUnconscious => health.IsCrit;
+	public bool IsUnconscious => HealthSystem.IsCrit;
 
 	protected virtual void Awake()
 	{
 		mobFollow = GetComponent<MobFollow>();
 		mobExplore = GetComponent<MobExplore>();
 		mobFlee = GetComponent<MobFlee>();
-		health = GetComponent<LivingHealthBehaviour>();
+		HealthSystem = GetComponent<HealthSystem>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
 		cnt = GetComponent<CustomNetTransform>();
 		registerObject = GetComponent<RegisterObject>();
@@ -78,7 +78,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		if (CustomNetworkManager.Instance._isServer)
 		{
 			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
-			health.applyDamageEvent += OnAttackReceived;
+			HealthSystem.applyDamageEvent += OnAttackReceived;
 			isServer = true;
 			AIStartServer();
 		}
@@ -89,7 +89,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		if (isServer)
 		{
 			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
-			health.applyDamageEvent += OnAttackReceived;
+			HealthSystem.applyDamageEvent += OnAttackReceived;
 		}
 	}
 
@@ -353,7 +353,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 			attackedBy = gameObject;
 		}
 
-		if (health.OverallHealth < healthThreshold)
+		if (HealthSystem.OverallHealth < healthThreshold)
 		{
 			StartFleeing(attackedBy, fleeDuration);
 		}
@@ -411,9 +411,9 @@ public class MobAI : MonoBehaviour, IServerDespawn
 	/// Virtual method to override on extensions of this class. Called when paired with MobMeleeAction
 	/// </summary>
 	/// <param name="dir"></param>
-	/// <param name="healthBehaviour"></param>
+	/// <param name="healthSystem"></param>
 	/// <param name="doLerpAnimation"></param>
-	public virtual void ActOnLiving(Vector3 dir, LivingHealthBehaviour healthBehaviour) {}
+	public virtual void ActOnLiving(Vector3 dir, HealthSystem healthSystem) {}
 
 	/// <summary>
 	/// Virtual method to override on extensions of this class. Called when paired with MobMeleeAction

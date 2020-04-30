@@ -20,7 +20,7 @@ public class MobAnimator : MonoBehaviour
 
 	private SimpleAnimal simpleAnimal;
 
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 
 	private Tuple<Sprite[], bool, bool, bool, float, List<int>> NewSprites;
 
@@ -68,7 +68,7 @@ public class MobAnimator : MonoBehaviour
 
 		npcDirectionalSprite = GetComponent<NPCDirectionalSprites>();
 
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 
 		simpleAnimal = GetComponent<SimpleAnimal>();
 
@@ -114,7 +114,7 @@ public class MobAnimator : MonoBehaviour
 
 			for (int i = 0; i < animationLength; i++)
 			{
-				if (livingHealthBehaviour.IsDead && spritesToUse.Item4 == false) yield break;//makes sure sprite hasnt changed due to death
+				if (healthSystem.IsDead && spritesToUse.Item4 == false) yield break;//makes sure sprite hasnt changed due to death
 
 				if (npcDirectionalSprite.CurrentFacingDirection != startingDirection && spritesToUse.Item3 == true)// resets direction if changed
 				{
@@ -128,7 +128,7 @@ public class MobAnimator : MonoBehaviour
 
 			yield return WaitFor.Seconds(spritesToUse.Item5 / 2);
 
-			if (livingHealthBehaviour.IsDead)//another death check
+			if (healthSystem.IsDead)//another death check
 			{
 				spriteRender.sprite = simpleAnimal.deadSprite;
 				yield break;
@@ -163,7 +163,7 @@ public class MobAnimator : MonoBehaviour
 
 			for (int i = start; i < animationLength; i++)
 			{
-				if (livingHealthBehaviour.IsDead && spritesToUse.Item4 == false) yield break;//makes sure sprite hasnt changed due to death
+				if (healthSystem.IsDead && spritesToUse.Item4 == false) yield break;//makes sure sprite hasnt changed due to death
 				if (i > 0 && spriteRender.sprite != NewSprites.Item1[i - 1])
 				{
 					var currentDirection = npcDirectionalSprite.CurrentFacingDirection;
@@ -199,7 +199,7 @@ public class MobAnimator : MonoBehaviour
 
 			//RESETING SPRITE TO CURRENT DIRECTION SPRITE, animation is over
 
-			if (livingHealthBehaviour.IsDead)//another death check
+			if (healthSystem.IsDead)//another death check
 			{
 				spriteRender.sprite = simpleAnimal.deadSprite;
 				yield break;

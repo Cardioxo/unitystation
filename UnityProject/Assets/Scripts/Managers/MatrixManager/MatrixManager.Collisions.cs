@@ -425,7 +425,7 @@ public partial class MatrixManager
 		float ApplyLivingDamage( MatrixInfo matrix, Vector3Int cellPos, float damage )
 		{
 			byte count = 0;
-			foreach ( var healthBehaviour in matrix.Matrix.Get<LivingHealthBehaviour>( cellPos, true ) )
+			foreach ( var healthBehaviour in matrix.Matrix.Get<HealthSystem>( cellPos, true ) )
 			{
 				healthBehaviour.ApplyDamageToBodypart( matrix.GameObject, damage, AttackType.Melee, DamageType.Brute );
 				count++;

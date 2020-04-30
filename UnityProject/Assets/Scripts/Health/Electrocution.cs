@@ -31,7 +31,7 @@ public class Electrocution
 	private Severity severity;
 	private GameObject victim;
 	private PlayerScript victimScript;
-	private LivingHealthBehaviour victimLHB;
+	private HealthSystem victimLHB;
 	private BodyPartType playerActiveHand;
 	private Vector2 shockSourcePos;
 	private string shockSourceName;
@@ -87,7 +87,7 @@ public class Electrocution
 		string shockSourceName, float voltage)
 	{
 		victim = player;
-		victimLHB = player.GetComponent<LivingHealthBehaviour>();
+		victimLHB = player.GetComponent<HealthSystem>();
 		victimScript = player.GetComponent<PlayerScript>();
 		this.shockSourcePos = shockSourcePos;
 		this.shockSourceName = shockSourceName;
@@ -144,7 +144,7 @@ public class Electrocution
 		// Assume the player is a human
 		float resistance = GetHumanHandFeetResistance(voltage);
 		PlayerScript playerScript = player.GetComponent<PlayerScript>();
-		LivingHealthBehaviour playerLHB = player.GetComponent<LivingHealthBehaviour>();
+		HealthSystem playerLHB = player.GetComponent<HealthSystem>();
 
 		// Give the player extra/less electrical resistance based on what they're holding/wearing
 		resistance += GetItemResistance(playerScript.ItemStorage.GetNamedItemSlot(NamedSlot.hands));

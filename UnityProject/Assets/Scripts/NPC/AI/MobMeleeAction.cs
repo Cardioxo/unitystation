@@ -78,7 +78,7 @@ namespace NPC.AI
 				return false;
 			}
 
-			var followLivingBehaviour = followTarget.GetComponent<LivingHealthBehaviour>();
+			var followLivingBehaviour = followTarget.GetComponent<HealthSystem>();
 			var distanceToTarget = Vector3.Distance(followTarget.transform.position, transform.position);
 			if (followLivingBehaviour != null)
 			{
@@ -112,7 +112,7 @@ namespace NPC.AI
 			//Only hit target
 			if (onlyActOnTarget)
 			{
-				var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+				var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 				if (hitInfo.transform != followTarget || healthBehaviour.IsDead)
 				{
 					return false;
@@ -127,7 +127,7 @@ namespace NPC.AI
 			//What to do with player hit?
 			if (hitInfo.transform.gameObject.layer == playersLayer)
 			{
-				var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+				var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 				if (healthBehaviour.IsDead)
 				{
 					return false;
@@ -165,7 +165,7 @@ namespace NPC.AI
 					}
 				}
 
-				var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+				var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 				if (healthBehaviour != null)
 				{
 					if (healthBehaviour.IsDead) return false;

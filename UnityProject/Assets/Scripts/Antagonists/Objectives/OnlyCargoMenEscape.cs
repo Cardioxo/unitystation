@@ -28,8 +28,8 @@ namespace Antagonists
 					if (playerDetails.Job != JobType.CARGOTECH && playerDetails.Job != JobType.MINER
 					                                           && playerDetails.Job != JobType.QUARTERMASTER)
 					{
-						if(playerDetails.Script == null || playerDetails.Script.playerHealth == null) continue;
-						if (!playerDetails.Script.playerHealth.IsDead)
+						if(playerDetails.Script == null || playerDetails.Script.PlayerHealthSystem == null) continue;
+						if (!playerDetails.Script.PlayerHealthSystem.IsDead)
 						{
 							return false;
 						}

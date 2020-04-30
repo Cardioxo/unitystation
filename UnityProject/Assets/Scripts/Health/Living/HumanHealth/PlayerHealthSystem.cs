@@ -8,7 +8,7 @@ using UnityEditor;
 /// <summary>
 /// Provides central access to the Players Health
 /// </summary>
-public class PlayerHealth : LivingHealthBehaviour
+public class PlayerHealthSystem : HealthSystem
 {
 	[SerializeField]
 	private MetabolismSystem metabolism;

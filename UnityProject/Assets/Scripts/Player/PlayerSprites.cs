@@ -35,9 +35,9 @@ public class PlayerSprites : MonoBehaviour
 	private Directional directional;
 	private BurningDirectionalOverlay engulfedBurningOverlay;
 	private BurningDirectionalOverlay partialBurningOverlay;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	private PlayerScript playerScript;
-	private PlayerHealth playerHealth;
+	private PlayerHealthSystem playerHealthSystem;
 	private PlayerSync playerSync;
 
 	private ClothingHideFlags hideClothingFlags = ClothingHideFlags.HIDE_NONE;
@@ -69,9 +69,9 @@ public class PlayerSprites : MonoBehaviour
 			partialBurningOverlay.StopBurning();
 		}
 
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
-		livingHealthBehaviour.OnClientFireStacksChange.AddListener(OnClientFireStacksChange);
-		OnClientFireStacksChange(livingHealthBehaviour.FireStacks);
+		healthSystem = GetComponent<HealthSystem>();
+		healthSystem.OnClientFireStacksChange.AddListener(OnClientFireStacksChange);
+		OnClientFireStacksChange(healthSystem.FireStacks);
 
 		//StaticSpriteHandler
 
@@ -288,9 +288,9 @@ public class PlayerSprites : MonoBehaviour
 			c.Direction = direction;
 		}
 
-		if (livingHealthBehaviour.FireStacks > 0)
+		if (healthSystem.FireStacks > 0)
 		{
-			if (livingHealthBehaviour.FireStacks >= FIRE_STACK_ENGULF_THRESHOLD)
+			if (healthSystem.FireStacks >= FIRE_STACK_ENGULF_THRESHOLD)
 			{
 				engulfedBurningOverlay.Burn(direction);
 			}

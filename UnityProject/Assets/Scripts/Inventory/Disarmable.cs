@@ -8,7 +8,7 @@ public class Disarmable : MonoBehaviour, IClientInteractable<PositionalHandApply
 {
 	public bool Interact(PositionalHandApply interaction)
 	{
-		var performerPlayerHealth = interaction.Performer.GetComponent<PlayerHealth>();
+		var performerPlayerHealth = interaction.Performer.GetComponent<PlayerHealthSystem>();
 		var performerRegisterPlayer = interaction.Performer.GetComponent<RegisterPlayer>();
 
 		// Is the target in range for a disarm? Is the performer's intent set to disarm?

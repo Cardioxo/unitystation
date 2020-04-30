@@ -10,7 +10,7 @@ public class ObserveStorageRelationship : RangeRelationship
 {
 	private readonly PlayerMove observedPlayerMove;
 	private readonly RegisterPlayer observedRegisterPlayer;
-	private readonly PlayerHealth observedPlayerHealth;
+	private readonly PlayerHealthSystem observedPlayerHealthSystem;
 	public readonly RegisterPlayer ObserverPlayer;
 	public readonly InteractableStorage ObservedStorage;
 
@@ -27,12 +27,12 @@ public class ObserveStorageRelationship : RangeRelationship
 		{
 			this.observedRegisterPlayer = rootStorage.GetComponent<RegisterPlayer>();
 
-			this.observedPlayerHealth = rootStorage.GetComponent<PlayerHealth>();
+			this.observedPlayerHealthSystem = rootStorage.GetComponent<PlayerHealthSystem>();
 
 			//add listeners for non-range-based ways in which the relationship can end
 			observedPlayerMove.OnCuffChangeServer.AddListener(OnCuffChangeServer);
 			observedRegisterPlayer.OnSlipChangeServer.AddListener(OnSlipChangeServer);
-			observedPlayerHealth.OnConsciousStateChangeServer.AddListener(OnConsciousStateChangeServer);
+			observedPlayerHealthSystem.OnConsciousStateChangeServer.AddListener(OnConsciousStateChangeServer);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class ObserveStorageRelationship : RangeRelationship
 		//not observing a player, so only range matters for checking observation
 		if (observedPlayerMove == null) return true;
 
-		return observedPlayerHealth.ConsciousState != ConsciousState.CONSCIOUS ||
+		return observedPlayerHealthSystem.ConsciousState != ConsciousState.CONSCIOUS ||
 		       observedPlayerMove.IsCuffed ||
 		       observedRegisterPlayer.IsSlippingServer;
 	}
@@ -91,7 +91,7 @@ public class ObserveStorageRelationship : RangeRelationship
 			//remove our listeners
 			observedPlayerMove.OnCuffChangeServer.RemoveListener(OnCuffChangeServer);
 			observedRegisterPlayer.OnSlipChangeServer.RemoveListener(OnSlipChangeServer);
-			observedPlayerHealth.OnConsciousStateChangeServer.RemoveListener(OnConsciousStateChangeServer);
+			observedPlayerHealthSystem.OnConsciousStateChangeServer.RemoveListener(OnConsciousStateChangeServer);
 		}
 	}
 }

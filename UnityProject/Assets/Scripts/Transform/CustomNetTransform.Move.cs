@@ -561,7 +561,7 @@ public partial class CustomNetTransform
 		Vector3Int intOrigin = Vector3Int.RoundToInt(origin);
 		Vector3Int intGoal = Vector3Int.RoundToInt(goal);
 		var info = serverState.ActiveThrow;
-		List<LivingHealthBehaviour> hitDamageables = null;
+		List<HealthSystem> hitDamageables = null;
 
 		if (serverState.Speed > SpeedHitThreshold && HittingSomething(intGoal, info.ThrownBy, out hitDamageables))
 		{
@@ -585,7 +585,7 @@ public partial class CustomNetTransform
 	/// <summary>
 	/// Hit for thrown (non-tile-snapped) items
 	/// </summary>
-	protected virtual void OnHit(Vector3Int pos, ThrowInfo info, List<LivingHealthBehaviour> objects, List<TilemapDamage> tiles)
+	protected virtual void OnHit(Vector3Int pos, ThrowInfo info, List<HealthSystem> objects, List<TilemapDamage> tiles)
 	{
 		if (ItemAttributes == null)
 		{
@@ -654,7 +654,7 @@ public partial class CustomNetTransform
 	}
 
 	/// Lists objects to be damaged on given tile. Prob should be moved elsewhere
-	private bool HittingSomething(Vector3Int atPos, GameObject thrownBy, out List<LivingHealthBehaviour> victims)
+	private bool HittingSomething(Vector3Int atPos, GameObject thrownBy, out List<HealthSystem> victims)
 	{
 		//Not damaging anything at launch tile
 		if (Vector3Int.RoundToInt(serverState.ActiveThrow.OriginWorldPos) == atPos)
@@ -662,13 +662,13 @@ public partial class CustomNetTransform
 			victims = null;
 			return false;
 		}
-		var objectsOnTile = MatrixManager.GetAt<LivingHealthBehaviour>(atPos, isServer : true);
+		var objectsOnTile = MatrixManager.GetAt<HealthSystem>(atPos, isServer : true);
 		if (objectsOnTile != null)
 		{
-			var damageables = new List<LivingHealthBehaviour>();
+			var damageables = new List<HealthSystem>();
 			for (var i = 0; i < objectsOnTile.Count; i++)
 			{
-				LivingHealthBehaviour obj = objectsOnTile[i];
+				HealthSystem obj = objectsOnTile[i];
 				//Skip thrower for now
 				if (obj.gameObject == thrownBy)
 				{

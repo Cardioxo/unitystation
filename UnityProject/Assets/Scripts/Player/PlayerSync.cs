@@ -717,7 +717,7 @@ public partial class PlayerSync : NetworkBehaviour, IPushable, IPlayerControllab
 			}
 			else // Player tried to move but isn't allowed
 			{
-				if (playerScript.playerHealth.IsDead)
+				if (playerScript.PlayerHealthSystem.IsDead)
 				{
 					playerScript.playerNetworkActions.CmdSpawnPlayerGhost();
 				}

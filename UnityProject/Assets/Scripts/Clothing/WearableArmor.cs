@@ -18,7 +18,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 	[Tooltip("What body parts does this item protect")]
 	private BodyPartsCovered bodyPartsCovered;
 
-	private PlayerHealth player;
+	private PlayerHealthSystem player;
 	private Armor armor;
 
 	public void Awake()
@@ -31,7 +31,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 		//Wearing
 		if (info.ToSlot != null & info.ToSlot?.NamedSlot != null)
 		{
-			player = info.ToRootPlayer?.PlayerScript.playerHealth;
+			player = info.ToRootPlayer?.PlayerScript.PlayerHealthSystem;
 
 			if (player != null && info.ToSlot.NamedSlot == slot)
 			{
@@ -41,7 +41,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 		//taking off
 		if (info.FromSlot != null & info.FromSlot?.NamedSlot != null)
 		{
-			player = info.FromRootPlayer?.PlayerScript.playerHealth;
+			player = info.FromRootPlayer?.PlayerScript.PlayerHealthSystem;
 
 			if (player != null && info.FromSlot.NamedSlot == slot)
 			{

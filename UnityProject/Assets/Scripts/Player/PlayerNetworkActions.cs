@@ -122,7 +122,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 				playerScript.playerMove.Unbuckle();
 			}
 		}
-		else if (playerScript.playerHealth.FireStacks > 0) // Check if we are on fire. If we are perform a stop-drop-roll animation and reduce the fire stacks.
+		else if (playerScript.PlayerHealthSystem.FireStacks > 0) // Check if we are on fire. If we are perform a stop-drop-roll animation and reduce the fire stacks.
 		{
 			if (!playerScript.registerTile.IsLayingDown)
 			{
@@ -133,7 +133,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 			else
 			{
 				// Remove 5 stacks(?) per roll action.
-				playerScript.playerHealth.ChangeFireStacks(-5.0f);
+				playerScript.PlayerHealthSystem.ChangeFireStacks(-5.0f);
 				// Find the next in the roll sequence. Also unlock the facing direction temporarily since ServerStun locks it.
 				playerScript.playerDirectional.LockDirection = false;
 				Orientation faceDir = playerScript.playerDirectional.CurrentDirection;
@@ -159,9 +159,9 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 				playerScript.playerDirectional.LockDirection = true;
 			}
 
-			if (playerScript.playerHealth.FireStacks <= 0)
+			if (playerScript.PlayerHealthSystem.FireStacks <= 0)
 			{
-				playerScript.playerHealth.Extinguish();
+				playerScript.PlayerHealthSystem.Extinguish();
 			}
 		}
 		else if (playerScript.playerMove.IsCuffed) // Check if cuffed.
@@ -439,8 +439,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	public void CmdToggleChatIcon(bool turnOn, string message, ChatChannel chatChannel, ChatModifier chatModifier)
 	{
 		if (!playerScript.pushPull.VisibleState || (playerScript.mind.occupation.JobType == JobType.NULL)
-												|| playerScript.playerHealth.IsDead || playerScript.playerHealth.IsCrit
-												|| playerScript.playerHealth.IsCardiacArrest)
+												|| playerScript.PlayerHealthSystem.IsDead || playerScript.PlayerHealthSystem.IsCrit
+												|| playerScript.PlayerHealthSystem.IsCardiacArrest)
 		{
 			//Don't do anything with chat icon if player is invisible or not spawned in
 			//This will also prevent clients from snooping other players local chat messages that aren't visible to them
@@ -459,7 +459,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[Command]
 	public void CmdCommitSuicide()
 	{
-		GetComponent<LivingHealthBehaviour>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
+		GetComponent<HealthSystem>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
 	}
 
 	//Respawn action for Deathmatch v 0.1.3
@@ -498,8 +498,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	public void ServerSpawnPlayerGhost()
 	{
 		//Only force to ghost if the mind belongs in to that body
-		var currentMobID = GetComponent<LivingHealthBehaviour>().mobID;
-		if (GetComponent<LivingHealthBehaviour>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
+		var currentMobID = GetComponent<HealthSystem>().mobID;
+		if (GetComponent<HealthSystem>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
 		{
 			PlayerSpawn.ServerSpawnGhost(playerScript.mind);
 		}
@@ -635,8 +635,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 		if (!Cooldowns.TryStartServer(playerScript, CommonCooldowns.Instance.Melee)) return;
 
 		string hugged = huggedPlayer.GetComponent<PlayerScript>().playerName;
-		var lhb = gameObject.GetComponent<LivingHealthBehaviour>();
-		var lhbOther = huggedPlayer.GetComponent<LivingHealthBehaviour>();
+		var lhb = gameObject.GetComponent<HealthSystem>();
+		var lhbOther = huggedPlayer.GetComponent<HealthSystem>();
 		if (lhb != null && lhbOther != null && (lhb.FireStacks > 0 || lhbOther.FireStacks > 0))
 		{
 			lhb.ApplyDamage(huggedPlayer, 1, AttackType.Fire, DamageType.Burn);
@@ -678,7 +678,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[Server]
 	private void DoCPR(GameObject rescuer, GameObject CardiacArrestPlayer)
 	{
-		CardiacArrestPlayer.GetComponent<PlayerHealth>().bloodSystem.oxygenDamage -= 7f;
+		CardiacArrestPlayer.GetComponent<PlayerHealthSystem>().bloodSystem.oxygenDamage -= 7f;
 
 		Chat.AddActionMsgToChat(rescuer, $"You have performed CPR on {CardiacArrestPlayer.Player()?.Name}.",
 			$"{rescuer.Player()?.Name} has performed CPR on {CardiacArrestPlayer.Player()?.Name}.");

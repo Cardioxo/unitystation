@@ -244,7 +244,7 @@ public class PushPull : NetworkBehaviour, IRightClickable, IServerSpawn {
 	private void OnHighSpeedCollision( CollisionInfo collision )
 	{
 		bool collided = false;
-		foreach ( var living in MatrixManager.GetAt<LivingHealthBehaviour>( collision.CollisionTile, true ) )
+		foreach ( var living in MatrixManager.GetAt<HealthSystem>( collision.CollisionTile, true ) )
 		{
 			living.ApplyDamageToBodypart( gameObject, collision.Damage, AttackType.Melee, DamageType.Brute );
 			collided = true;
@@ -258,7 +258,7 @@ public class PushPull : NetworkBehaviour, IRightClickable, IServerSpawn {
 		if ( collided )
 		{
 			//Damage self as bad as the thing you collide with
-			GetComponent<LivingHealthBehaviour>()?.ApplyDamageToBodypart( gameObject, collision.Damage,  AttackType.Melee, DamageType.Brute );
+			GetComponent<HealthSystem>()?.ApplyDamageToBodypart( gameObject, collision.Damage,  AttackType.Melee, DamageType.Brute );
 			Logger.LogFormat( "{0}: collided with something at {2}, both received {1} damage",
 				Category.Health, gameObject.name, collision.Damage, collision.CollisionTile );
 		}

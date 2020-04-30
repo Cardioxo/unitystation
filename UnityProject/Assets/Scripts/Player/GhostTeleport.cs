@@ -63,7 +63,7 @@ public class GhostTeleport : MonoBehaviour
 				{
 					Status = "(Ghost)";
 				}
-				else if(!player.IsGhost & player.playerHealth.IsDead)
+				else if(!player.IsGhost & player.PlayerHealthSystem.IsDead)
 				{
 					Status = "(Dead)";
 				}

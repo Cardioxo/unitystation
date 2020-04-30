@@ -81,11 +81,11 @@ public partial class Chat : MonoBehaviour
 
 		// TODO the following code uses player.playerHealth, but ConciousState would be more appropriate.
 		// Check if the player is allowed to talk:
-		if (player != null && player.playerHealth != null)
+		if (player != null && player.PlayerHealthSystem != null)
 		{
-			if (player.playerHealth.IsCrit || player.playerHealth.IsCardiacArrest)
+			if (player.PlayerHealthSystem.IsCrit || player.PlayerHealthSystem.IsCardiacArrest)
 			{
-				if (!player.playerHealth.IsDead)
+				if (!player.PlayerHealthSystem.IsDead)
 				{
 					return;
 				}
@@ -94,7 +94,7 @@ public partial class Chat : MonoBehaviour
 					channels = ChatChannel.Ghost;
 				}
 			}
-			else if (!player.playerHealth.IsDead && !player.IsGhost)
+			else if (!player.PlayerHealthSystem.IsDead && !player.IsGhost)
 			{
 				//Control the chat bubble
 				player.playerNetworkActions.CmdToggleChatIcon(true, processedMessage.message, channels, processedMessage.chatModifiers);

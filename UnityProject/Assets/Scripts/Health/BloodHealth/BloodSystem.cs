@@ -40,7 +40,7 @@ public class BloodSystem : MonoBehaviour
 
 	public float oxygenDamage = 0;
 	private float toxinLevel = 0;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	private DNAandBloodType bloodType;
 	public float BloodLevel = (int)BloodVolume.NORMAL;
 	public bool IsBleeding { get; private set; }
@@ -50,7 +50,7 @@ public class BloodSystem : MonoBehaviour
 
 	void Awake()
 	{
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 	}
 
 	void OnEnable()
@@ -76,7 +76,7 @@ public class BloodSystem : MonoBehaviour
 		//Server Only:
 		if (CustomNetworkManager.Instance._isServer)
 		{
-			if (livingHealthBehaviour.IsDead)
+			if (healthSystem.IsDead)
 			{
 				HeartRate = 0;
 				return;
@@ -108,9 +108,9 @@ public class BloodSystem : MonoBehaviour
 		if (IsBleeding)
 		{
 			float bleedVolume = 0;
-			for (int i = 0; i < livingHealthBehaviour.BodyParts.Count; i++)
+			for (int i = 0; i < healthSystem.BodyParts.Count; i++)
 			{
-				BodyPartBehaviour BPB = livingHealthBehaviour.BodyParts[i];
+				BodyPartBehaviour BPB = healthSystem.BodyParts[i];
 				if (BPB.isBleeding)
 				{
 					bleedVolume += (BPB.BruteDamage * 0.013f);
@@ -150,9 +150,9 @@ public class BloodSystem : MonoBehaviour
 	public void StopBleeding(BodyPartBehaviour bodyPart)
 	{
 		bodyPart.isBleeding = false;
-		for (int i = 0; i < livingHealthBehaviour.BodyParts.Count; i++)
+		for (int i = 0; i < healthSystem.BodyParts.Count; i++)
 		{
-			BodyPartBehaviour BPB = livingHealthBehaviour.BodyParts[i];
+			BodyPartBehaviour BPB = healthSystem.BodyParts[i];
 			if(BPB.isBleeding){
 				return;
 			}
@@ -164,9 +164,9 @@ public class BloodSystem : MonoBehaviour
 	/// Stops bleeding on all bodyparts. Server Only.
 	/// </summary>
 	public void StopBleedingAll(){
-		for (int i = 0; i < livingHealthBehaviour.BodyParts.Count; i++)
+		for (int i = 0; i < healthSystem.BodyParts.Count; i++)
 		{
-			BodyPartBehaviour BPB = livingHealthBehaviour.BodyParts[i];
+			BodyPartBehaviour BPB = healthSystem.BodyParts[i];
 			BPB.isBleeding = false;
 		}
 		IsBleeding = false;
@@ -227,7 +227,7 @@ public class BloodSystem : MonoBehaviour
 	/// </summary>
 	public void AffectBloodState(BodyPartType bodyPartType, DamageType damageType, float amount, bool isHeal = false)
 	{
-		BodyPartBehaviour bodyPart = livingHealthBehaviour.FindBodyPart(bodyPartType);
+		BodyPartBehaviour bodyPart = healthSystem.FindBodyPart(bodyPartType);
 
 		if (isHeal)
 		{

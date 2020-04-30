@@ -69,7 +69,7 @@ namespace Clothing
 			}
 
 			player.ServerStun(coitusTime, true);
-			StartCoroutine(Coitus(player.PlayerScript.playerHealth));
+			StartCoroutine(Coitus(player.PlayerScript.PlayerHealthSystem));
 		}
 
 		private void OnReleasing()
@@ -82,14 +82,14 @@ namespace Clothing
 			StartCoroutine(Release());
 		}
 
-		private IEnumerator Coitus(PlayerHealth player)
+		private IEnumerator Coitus(PlayerHealthSystem player)
 		{
 			yield return WaitFor.Seconds(coitusTime);
 			Pregnancy(player);
 			yield return WaitFor.EndOfFrame;
 		}
 
-		private async Task Pregnancy(PlayerHealth player)
+		private async Task Pregnancy(PlayerHealthSystem player)
 		{
 			KillHugger();
 			await Task.Delay(TimeSpan.FromSeconds(pregnancyTime));
@@ -146,7 +146,7 @@ namespace Clothing
 			if ((CustomNetworkManager.Instance._isServer && GameData.IsHeadlessServer)
 			    || playerScript == null
 			    || playerScript.playerNetworkActions == null
-			    || playerScript.playerHealth == null)
+			    || playerScript.PlayerHealthSystem == null)
 			{
 				return;
 			}

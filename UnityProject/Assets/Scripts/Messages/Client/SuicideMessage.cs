@@ -7,7 +7,7 @@ public class SuicideMessage : ClientMessage
 	public override void Process()
 	{
 
-		if (SentByPlayer.Script.TryGetComponent<LivingHealthBehaviour>(out var livingHealthBehaviour))
+		if (SentByPlayer.Script.TryGetComponent<HealthSystem>(out var livingHealthBehaviour))
 		{
 			if (livingHealthBehaviour.IsDead)
 			{

@@ -416,7 +416,7 @@ public partial class ReagentContainer : MonoBehaviour, IRightClickable, IServerS
 
 	private void NotifyPlayersOfSpill(Vector3Int worldPos)
 	{
-		var mobs = MatrixManager.GetAt<LivingHealthBehaviour>(worldPos, true);
+		var mobs = MatrixManager.GetAt<HealthSystem>(worldPos, true);
 		if (mobs.Count > 0)
 		{
 			foreach (var mob in mobs)

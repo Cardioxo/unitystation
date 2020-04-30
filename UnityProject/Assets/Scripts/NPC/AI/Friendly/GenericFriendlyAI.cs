@@ -26,7 +26,7 @@ namespace NPC
 
 		protected override void UpdateMe()
 		{
-			if (health.IsDead || health.IsCrit || health.IsCardiacArrest) return;
+			if (HealthSystem.IsDead || HealthSystem.IsCrit || HealthSystem.IsCardiacArrest) return;
 
 			base.UpdateMe();
 			MonitorExtras();

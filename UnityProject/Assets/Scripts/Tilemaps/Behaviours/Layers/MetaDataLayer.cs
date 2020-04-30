@@ -115,7 +115,7 @@ public class MetaDataLayer : MonoBehaviour
 				{
 					matrix.ReactionManager.ExtinguishHotspot(localPosInt);
 
-					foreach (var livingHealthBehaviour in matrix.Get<LivingHealthBehaviour>(localPosInt, true))
+					foreach (var livingHealthBehaviour in matrix.Get<HealthSystem>(localPosInt, true))
 					{
 						livingHealthBehaviour.Extinguish();
 					}

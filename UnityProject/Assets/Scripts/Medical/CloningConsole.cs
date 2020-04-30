@@ -112,7 +112,7 @@ public class CloningConsole : MonoBehaviour, IServerSpawn
 		}
 	}
 
-	private void CreateRecord(LivingHealthBehaviour mob, PlayerScript playerScript)
+	private void CreateRecord(HealthSystem mob, PlayerScript playerScript)
 	{
 		var record = new CloningRecord();
 		record.UpdateRecord(mob, playerScript);
@@ -153,7 +153,7 @@ public class CloningRecord
 		scanID = Random.Range(0, 9999).ToString();
 	}
 
-	public void UpdateRecord(LivingHealthBehaviour mob, PlayerScript playerScript)
+	public void UpdateRecord(HealthSystem mob, PlayerScript playerScript)
 	{
 		mobID = mob.mobID;
 		mind = playerScript.mind;

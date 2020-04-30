@@ -81,11 +81,11 @@ public class UI_HeartMonitor : TooltipMonoBehaviour
 
 	private void CheckHealth()
 	{
-		if (PlayerManager.LocalPlayerScript.playerHealth.OverallHealth == overallHealthCache)
+		if (PlayerManager.LocalPlayerScript.PlayerHealthSystem.OverallHealth == overallHealthCache)
 		{
 			return;
 		}
-		overallHealthCache = PlayerManager.LocalPlayerScript.playerHealth.OverallHealth;
+		overallHealthCache = PlayerManager.LocalPlayerScript.PlayerHealthSystem.OverallHealth;
 
 		if (overallHealthCache >= 100)
 		{

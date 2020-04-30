@@ -13,7 +13,7 @@ public class BrainSystem : MonoBehaviour //Do not turn into NetBehaviour
 	private Brain brain;
 	private BloodSystem bloodSystem;
 	private RespiratorySystem respiratorySystem;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	private PlayerScript playerScript; //null if it is an animal
 	/// <summary>
 	/// Is this body just a husk (missing brain)
@@ -43,7 +43,7 @@ public class BrainSystem : MonoBehaviour //Do not turn into NetBehaviour
 		playerScript = GetComponent<PlayerScript>();
 		bloodSystem = GetComponent<BloodSystem>();
 		respiratorySystem = GetComponent<RespiratorySystem>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 
 		//Server only
 		if (CustomNetworkManager.Instance._isServer)
@@ -92,9 +92,9 @@ public class BrainSystem : MonoBehaviour //Do not turn into NetBehaviour
 
 	void checkOverallDamage(){
 		if(bloodSystem.OxygenDamage > 200){
-			if (!livingHealthBehaviour.IsDead)
+			if (!healthSystem.IsDead)
 			{
-				livingHealthBehaviour.Death();
+				healthSystem.Death();
 			}
 		}
 	}

@@ -60,7 +60,7 @@ public class GUI_Spawner : NetTab
 				PrefabEntryList.AddItem( item );
 			}
 
-			SpawnedObjectList.AddObjects( GUI_ShuttleControl.GetObjectsOf<LivingHealthBehaviour>() );
+			SpawnedObjectList.AddObjects( GUI_ShuttleControl.GetObjectsOf<HealthSystem>() );
 
 			//		Done via editor in this example, but can be done via code as well, like this:
 			//		NestedSwitcher.OnPageChange.AddListener( RefreshSubpageLabel );
@@ -199,7 +199,7 @@ public class GUI_Spawner : NetTab
 			SoundManager.PlayNetworkedAtPos( "Notice1", Provider.transform.position );
 
 			//Get mob's gameobject and do something bad to it
-			mob.TrackedObject.GetComponent<LivingHealthBehaviour>().ApplyDamageToBodypart( null, 500, AttackType.Internal, DamageType.Brute, BodyPartType.Head );
+			mob.TrackedObject.GetComponent<HealthSystem>().ApplyDamageToBodypart( null, 500, AttackType.Internal, DamageType.Brute, BodyPartType.Head );
 			SoundManager.PlayNetworkedAtPos( "Smash", mob.TrackedObject.transform.position );
 
 			SpawnedObjectList.Remove( index );

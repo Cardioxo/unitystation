@@ -329,7 +329,7 @@ public class DoorController : NetworkBehaviour
 
 	private void ServerDamageOnClose()
 			{
-				foreach ( LivingHealthBehaviour healthBehaviour in matrix.Get<LivingHealthBehaviour>(registerTile.LocalPositionServer, true) )
+				foreach ( HealthSystem healthBehaviour in matrix.Get<HealthSystem>(registerTile.LocalPositionServer, true) )
 				{
 					healthBehaviour.ApplyDamage(gameObject, damageClosed, AttackType.Melee, DamageType.Brute);
 				}

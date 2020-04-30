@@ -54,7 +54,7 @@ public class Mind
 	{
 		playerScript.mind = this;
 		body = playerScript;
-		bodyMobID = playerScript.GetComponent<LivingHealthBehaviour>().mobID;
+		bodyMobID = playerScript.GetComponent<HealthSystem>().mobID;
 		StopGhosting();
 	}
 
@@ -116,7 +116,7 @@ public class Mind
 		var currentMob = GetCurrentMob();
 		if (!IsGhosting)
 		{
-			var livingHealthBehaviour = currentMob.GetComponent<LivingHealthBehaviour>();
+			var livingHealthBehaviour = currentMob.GetComponent<HealthSystem>();
 			if (!livingHealthBehaviour.IsDead)
 			{
 				return CloneableStatus.StillAlive;

@@ -11,7 +11,7 @@ public class HealthTemperatureMessage : ServerMessage
 
 	public override void Process()
 	{
-		PlayerManager.LocalPlayerScript.playerHealth?.UpdateClientTemperatureStats(temperature);
+		PlayerManager.LocalPlayerScript.PlayerHealthSystem?.UpdateClientTemperatureStats(temperature);
 	}
 
 	public static HealthTemperatureMessage Send(GameObject entityToUpdate, float temperatureValue)

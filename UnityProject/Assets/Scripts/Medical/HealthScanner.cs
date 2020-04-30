@@ -13,13 +13,13 @@ public class HealthScanner : MonoBehaviour, ICheckedInteractable<HandApply>
 	{
 		if (!DefaultWillInteract.Default(interaction, side)) return false;
 		//can only be applied to LHB
-		if (!Validations.HasComponent<LivingHealthBehaviour>(interaction.TargetObject)) return false;
+		if (!Validations.HasComponent<HealthSystem>(interaction.TargetObject)) return false;
 		return true;
 	}
 
 	public void ServerPerformInteraction(HandApply interaction)
 	{
-		var livingHealth = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var livingHealth = interaction.TargetObject.GetComponent<HealthSystem>();
 		string ToShow = (livingHealth.name + " is " + livingHealth.ConsciousState.ToString() + "\n"
 		                 + "OverallHealth = " + livingHealth.OverallHealth.ToString() + " Blood level = " + livingHealth.bloodSystem.BloodLevel.ToString() + "\n"
 		                 + "Blood levels = " + livingHealth.CalculateOverallBloodLossDamage() + "\n");

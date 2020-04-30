@@ -40,10 +40,10 @@ public class HolyBook: MonoBehaviour, IPredictedCheckedInteractable<PositionalHa
 	public void ServerPerformInteraction(PositionalHandApply interaction)
 	{
 		//can only be applied to LHB
-		if (!Validations.HasComponent<LivingHealthBehaviour>(interaction.TargetObject)) return;
+		if (!Validations.HasComponent<HealthSystem>(interaction.TargetObject)) return;
 
 		//The book can't save people who are dead.
-		var LHB = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var LHB = interaction.TargetObject.GetComponent<HealthSystem>();
 
 		if (LHB.IsDead)
 		{

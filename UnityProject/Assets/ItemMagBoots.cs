@@ -100,12 +100,12 @@ public class ItemMagBoots : NetworkBehaviour,
 		if (isOn)
 		{
 			ApplyEffect();
-			player.Script.playerHealth.OnDeathNotifyEvent += OnPlayerDeath;
+			player.Script.PlayerHealthSystem.OnDeathNotifyEvent += OnPlayerDeath;
 		}
 		else
 		{
 			RemoveEffect();
-			player.Script.playerHealth.OnDeathNotifyEvent -= OnPlayerDeath;
+			player.Script.PlayerHealthSystem.OnDeathNotifyEvent -= OnPlayerDeath;
 		}
 	}
 
@@ -127,7 +127,7 @@ public class ItemMagBoots : NetworkBehaviour,
 				ServerChangeState(player);
 			}
 			UIActionManager.Toggle(this, false);
-			player.Script.playerHealth.OnDeathNotifyEvent -= OnPlayerDeath;
+			player.Script.PlayerHealthSystem.OnDeathNotifyEvent -= OnPlayerDeath;
 			player = null;
 		}
 		else
@@ -172,7 +172,7 @@ public class ItemMagBoots : NetworkBehaviour,
 	private bool ValidPlayer()
 	{
 		if (player == null || player.Script == null
-		                   || player.Script.playerHealth == null) return false;
+		                   || player.Script.PlayerHealthSystem == null) return false;
 		return true;
 	}
 }

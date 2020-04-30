@@ -10,7 +10,7 @@ public class MobPathFinder : MonoBehaviour
 	protected CustomNetTransform cnt;
 
 	protected NPCDirectionalSprites dirSprites;
-	protected LivingHealthBehaviour health;
+	protected HealthSystem HealthSystem;
 
 	protected bool isServer;
 
@@ -49,7 +49,7 @@ public class MobPathFinder : MonoBehaviour
 		registerTile = GetComponent<RegisterTile>();
 		cnt = GetComponent<CustomNetTransform>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
-		health = GetComponent<LivingHealthBehaviour>();
+		HealthSystem = GetComponent<HealthSystem>();
 	}
 
 	public virtual void OnEnable()
@@ -290,7 +290,7 @@ public class MobPathFinder : MonoBehaviour
 	/// </summary>
 	protected void FollowPath(List<Node> path)
 	{
-		if (health.IsDead || health.IsCrit || health.IsCardiacArrest)
+		if (HealthSystem.IsDead || HealthSystem.IsCrit || HealthSystem.IsCardiacArrest)
 		{
 			Logger.Log("You are trying to follow a path when living thing is dead or in crit", Category.Movement);
 			status = Status.idle;

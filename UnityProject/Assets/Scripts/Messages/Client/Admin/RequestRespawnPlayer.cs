@@ -21,13 +21,13 @@ public class RequestRespawnPlayer : ClientMessage
 		if (player != null)
 		{
 			var deadPlayer = PlayerList.Instance.GetByUserID(UserToRespawn);
-			if (deadPlayer.Script.playerHealth == null)
+			if (deadPlayer.Script.PlayerHealthSystem == null)
 			{
 				TryRespawn(deadPlayer);
 				return;
 			}
 
-			if (deadPlayer.Script.playerHealth.IsDead)
+			if (deadPlayer.Script.PlayerHealthSystem.IsDead)
 			{
 				TryRespawn(deadPlayer);
 				return;
