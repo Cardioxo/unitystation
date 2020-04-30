@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 using Mirror;
 
 //TODO: The actual sprite handling needs to be offloaded to SpriteHandler at some point

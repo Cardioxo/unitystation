@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 using Chemistry;
+using Health;
 
 /// <summary>
 /// Note that pretty much all the methods in this component work server-side only, but aren't

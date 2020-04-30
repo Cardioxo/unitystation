@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 using System;
+using Health;
 
 public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 {

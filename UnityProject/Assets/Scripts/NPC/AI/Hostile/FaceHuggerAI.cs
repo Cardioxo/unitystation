@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Clothing;
+using Health;
 using NPC.AI;
 using UnityEngine;
 using Random = UnityEngine.Random;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 
 /// <summary>
 /// Allows an object to be pet by a player. Shameless copy of Huggable.cs

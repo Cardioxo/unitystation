@@ -1,165 +1,165 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using AdminTools;
-using UnityEngine;
+﻿using AdminTools;
 using Mirror;
-using UnityEditor;
+using UnityEngine;
 
-/// <summary>
-/// Provides central access to the Organic Health, which includes most player race characters
-/// </summary>
-public class OrganicHealthSystem : HealthSystem
+namespace Health
 {
-	[SerializeField]
-	private MetabolismSystem metabolism;
-
-	public MetabolismSystem Metabolism { get => metabolism; }
-
-	private PlayerMove playerMove;
-
-	private PlayerNetworkActions playerNetworkActions;
 	/// <summary>
-	/// Cached register player
+	/// Provides central access to the Organic Health, which includes most player race characters
 	/// </summary>
-	private RegisterPlayer registerPlayer;
-
-	private ItemStorage itemStorage;
-
-	//fixme: not actually set or modified. keep an eye on this!
-	public bool serverPlayerConscious { get; set; } = true; //Only used on the server
-
-	public override void Awake()
+	public class OrganicHealthSystem : HealthSystem
 	{
-		base.Awake();
+		[SerializeField]
+		private MetabolismSystem metabolism;
 
-		OnConsciousStateChangeServer.AddListener(OnPlayerConsciousStateChangeServer);
+		public MetabolismSystem Metabolism { get => metabolism; }
 
-		metabolism = GetComponent<MetabolismSystem>();
-		if (metabolism == null)
+		private PlayerMove playerMove;
+
+		private PlayerNetworkActions playerNetworkActions;
+		/// <summary>
+		/// Cached register player
+		/// </summary>
+		private RegisterPlayer registerPlayer;
+
+		private ItemStorage itemStorage;
+
+		//fixme: not actually set or modified. keep an eye on this!
+		public bool serverPlayerConscious { get; set; } = true; //Only used on the server
+
+		public override void Awake()
 		{
-			metabolism = gameObject.AddComponent<MetabolismSystem>();
+			base.Awake();
+
+			OnConsciousStateChangeServer.AddListener(OnPlayerConsciousStateChangeServer);
+
+			metabolism = GetComponent<MetabolismSystem>();
+			if (metabolism == null)
+			{
+				metabolism = gameObject.AddComponent<MetabolismSystem>();
+			}
 		}
-	}
 
-	public override void OnStartClient()
-	{
-		playerNetworkActions = GetComponent<PlayerNetworkActions>();
-		playerMove = GetComponent<PlayerMove>();
-		registerPlayer = GetComponent<RegisterPlayer>();
-		itemStorage = GetComponent<ItemStorage>();
-		base.OnStartClient();
-	}
-
-	protected override void OnDeathActions()
-	{
-		if (CustomNetworkManager.Instance._isServer)
+		public override void OnStartClient()
 		{
-			ConnectedPlayer player = PlayerList.Instance.Get(gameObject);
+			playerNetworkActions = GetComponent<PlayerNetworkActions>();
+			playerMove = GetComponent<PlayerMove>();
+			registerPlayer = GetComponent<RegisterPlayer>();
+			itemStorage = GetComponent<ItemStorage>();
+			base.OnStartClient();
+		}
 
-			string killerName = null;
-			if (LastDamagedBy != null)
+		protected override void OnDeathActions()
+		{
+			if (CustomNetworkManager.Instance._isServer)
 			{
-				var lastDamager = PlayerList.Instance.Get(LastDamagedBy);
-				if (lastDamager != null)
+				ConnectedPlayer player = PlayerList.Instance.Get(gameObject);
+
+				string killerName = null;
+				if (LastDamagedBy != null)
 				{
-					killerName = lastDamager.Name;
-					AutoMod.ProcessPlayerKill(lastDamager, player);
-				}
-			}
-
-			if (killerName == null)
-			{
-				killerName = "Stressful work";
-			}
-
-			string playerName = player?.Name ?? "dummy";
-			if (killerName == playerName)
-			{
-				Chat.AddActionMsgToChat(gameObject, "You committed suicide, what a waste.", $"{playerName} committed suicide.");
-			}
-			else if (killerName.EndsWith(playerName))
-			{
-				// chain reactions
-				Chat.AddActionMsgToChat(gameObject, $" You screwed yourself up with some help from {killerName}",
-					$"{playerName} screwed himself up with some help from {killerName}");
-			}
-			else
-			{
-				PlayerList.Instance.TrackKill(LastDamagedBy, gameObject);
-			}
-
-			//drop items in hand
-			if (itemStorage != null)
-			{
-				Inventory.ServerDrop(itemStorage.GetNamedItemSlot(NamedSlot.leftHand));
-				Inventory.ServerDrop(itemStorage.GetNamedItemSlot(NamedSlot.rightHand));
-			}
-
-			if (isServer)
-			{
-				EffectsFactory.BloodSplat(transform.position, BloodSplatSize.large, bloodColor);
-				string descriptor = null;
-				if (player != null)
-				{
-					descriptor = player?.Script?.characterSettings?.PossessivePronoun();
+					var lastDamager = PlayerList.Instance.Get(LastDamagedBy);
+					if (lastDamager != null)
+					{
+						killerName = lastDamager.Name;
+						AutoMod.ProcessPlayerKill(lastDamager, player);
+					}
 				}
 
-				if (descriptor == null)
+				if (killerName == null)
 				{
-					descriptor = "their";
+					killerName = "Stressful work";
 				}
 
-				Chat.AddLocalMsgToChat($"<b>{playerName}</b> seizes up and falls limp, {descriptor} eyes dead and lifeless...", (Vector3)registerPlayer.WorldPositionServer, gameObject);
+				string playerName = player?.Name ?? "dummy";
+				if (killerName == playerName)
+				{
+					Chat.AddActionMsgToChat(gameObject, "You committed suicide, what a waste.", $"{playerName} committed suicide.");
+				}
+				else if (killerName.EndsWith(playerName))
+				{
+					// chain reactions
+					Chat.AddActionMsgToChat(gameObject, $" You screwed yourself up with some help from {killerName}",
+						$"{playerName} screwed himself up with some help from {killerName}");
+				}
+				else
+				{
+					PlayerList.Instance.TrackKill(LastDamagedBy, gameObject);
+				}
+
+				//drop items in hand
+				if (itemStorage != null)
+				{
+					Inventory.ServerDrop(itemStorage.GetNamedItemSlot(NamedSlot.leftHand));
+					Inventory.ServerDrop(itemStorage.GetNamedItemSlot(NamedSlot.rightHand));
+				}
+
+				if (isServer)
+				{
+					EffectsFactory.BloodSplat(transform.position, BloodSplatSize.large, bloodColor);
+					string descriptor = null;
+					if (player != null)
+					{
+						descriptor = player?.Script?.characterSettings?.PossessivePronoun();
+					}
+
+					if (descriptor == null)
+					{
+						descriptor = "their";
+					}
+
+					Chat.AddLocalMsgToChat($"<b>{playerName}</b> seizes up and falls limp, {descriptor} eyes dead and lifeless...", (Vector3)registerPlayer.WorldPositionServer, gameObject);
+				}
+
+				PlayerDeathMessage.Send(gameObject);
 			}
-
-			PlayerDeathMessage.Send(gameObject);
 		}
-	}
 
-	[ClientRpc]
-	private void RpcPassBullets(GameObject target)
-	{
-		foreach (BoxCollider2D comp in target.GetComponents<BoxCollider2D>())
+		[ClientRpc]
+		private void RpcPassBullets(GameObject target)
 		{
-			if (!comp.isTrigger)
+			foreach (BoxCollider2D comp in target.GetComponents<BoxCollider2D>())
 			{
-				comp.enabled = false;
+				if (!comp.isTrigger)
+				{
+					comp.enabled = false;
+				}
 			}
 		}
-	}
 
-	[Server]
-	public void ServerGibPlayer()
-	{
-		Gib();
-	}
-
-	[Server]
-	public override void Gib()
-	{
-		Death();
-		EffectsFactory.BloodSplat( transform.position, BloodSplatSize.large, bloodColor );
-		//drop clothes, gib... but don't destroy actual player, a piece should remain
-
-		//drop everything
-		foreach (var slot in itemStorage.GetItemSlots())
+		[Server]
+		public void ServerGibPlayer()
 		{
-			Inventory.ServerDrop(slot);
+			Gib();
 		}
 
-		playerMove.PlayerScript.pushPull.VisibleState = false;
-		playerNetworkActions.ServerSpawnPlayerGhost();
-	}
-
-	///     make player unconscious upon crit
-	private void OnPlayerConsciousStateChangeServer( ConsciousState oldState, ConsciousState newState )
-	{
-		if ( isServer )
+		[Server]
+		public override void Gib()
 		{
-			playerNetworkActions.OnConsciousStateChanged(oldState, newState);
+			Death();
+			EffectsFactory.BloodSplat( transform.position, BloodSplatSize.large, bloodColor );
+			//drop clothes, gib... but don't destroy actual player, a piece should remain
+
+			//drop everything
+			foreach (var slot in itemStorage.GetItemSlots())
+			{
+				Inventory.ServerDrop(slot);
+			}
+
+			playerMove.PlayerScript.pushPull.VisibleState = false;
+			playerNetworkActions.ServerSpawnPlayerGhost();
 		}
 
-		//we stay upright if buckled or conscious
-		registerPlayer.ServerSetIsStanding(newState == ConsciousState.CONSCIOUS || playerMove.IsBuckled);
+		///     make player unconscious upon crit
+		private void OnPlayerConsciousStateChangeServer( ConsciousState oldState, ConsciousState newState )
+		{
+			if ( isServer )
+			{
+				playerNetworkActions.OnConsciousStateChanged(oldState, newState);
+			}
+
+			//we stay upright if buckled or conscious
+			registerPlayer.ServerSetIsStanding(newState == ConsciousState.CONSCIOUS || playerMove.IsBuckled);
+		}
 	}
 }
