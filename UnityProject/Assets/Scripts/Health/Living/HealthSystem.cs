@@ -66,9 +66,6 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	//For meat harvest (pete etc)
 	public bool allowKnifeHarvest;
 
-	[Header("For harvestable animals")]
-	public GameObject[] butcherResults;
-
 	protected DamageType LastDamageType;
 
 	protected GameObject LastDamagedBy;
@@ -355,7 +352,7 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 			afterDeathDamage += damage;
 			if ( afterDeathDamage >= GIB_THRESHOLD )
 			{
-				Harvest();//Gib() instead when fancy gibs are in
+				Gib(); //TODO add fancy gibs
 			}
 		}
 
@@ -739,23 +736,8 @@ public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, 
 	/// MISC Functions:
 	/// ---------------------------
 
-	///<summary>
-	/// If Harvesting is allowed (for pete the goat for example)
-	/// then spawn the butchered results
-	/// </summary>
 	[Server]
-	public void Harvest()
-	{
-		foreach (GameObject harvestPrefab in butcherResults)
-		{
-			Spawn.ServerPrefab(harvestPrefab, transform.position, parent: transform.parent);
-		}
-
-		Gib();
-	}
-
-	[Server]
-	protected virtual void Gib()
+	public virtual void Gib()
 	{
 		EffectsFactory.BloodSplat(transform.position, BloodSplatSize.large, bloodColor);
 		//todo: actual gibs

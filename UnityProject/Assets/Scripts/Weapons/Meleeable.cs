@@ -123,35 +123,15 @@ public class Meleeable : MonoBehaviour, IPredictedCheckedInteractable<Positional
 		}
 		else
 		{
-			//attacking objects
-
-			//butcher check
-			GameObject victim = interaction.TargetObject;
-			var healthComponent = victim.GetComponent<HealthSystem>();
-			if (healthComponent && healthComponent.allowKnifeHarvest && healthComponent.IsDead && Validations.HasItemTrait(handObject, CommonTraits.Instance.Knife) && interaction.Intent == Intent.Harm)
-			{
-				GameObject performer = interaction.Performer;
-
-				void ProgressFinishAction()
-				{
-					HealthSystem victimHealthSystem = victim.GetComponent<HealthSystem>();
-					victimHealthSystem.Harvest();
-					SoundManager.PlayNetworkedAtPos(butcherSound, victim.RegisterTile().WorldPositionServer);
-				}
-
-				var bar = StandardProgressAction.Create(ProgressConfig, ProgressFinishAction)
-					.ServerStartProgress(victim.RegisterTile(), butcherTime, performer);
-			}
-			else
-			{
-				if (gameObject.GetComponent<Integrity>() && emptyHand) return;
+			//attacking object
+			if (gameObject.GetComponent<Integrity>() && emptyHand) return;
 
 				wna.ServerPerformMeleeAttack(gameObject, interaction.TargetVector, interaction.TargetBodyPart, LayerType.None);
-				if (Validations.HasItemTrait(handObject, CommonTraits.Instance.Breakable))
-				{
+			if (Validations.HasItemTrait(handObject, CommonTraits.Instance.Breakable))
+			{
 					handObject.GetComponent<ItemBreakable>().AddDamage();
-				}
 			}
+			
 		}
 	}
 

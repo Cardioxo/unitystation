@@ -28,6 +28,7 @@ GameObject:
   - component: {fileID: 4146971549855715412}
   - component: {fileID: 5941598165320017927}
   - component: {fileID: 2133879513358567812}
+  - component: {fileID: 5407902926204632610}
   m_Layer: 12
   m_Name: NPC_GOD_Friendly
   m_TagString: Untagged
@@ -102,7 +103,6 @@ MonoBehaviour:
   - {fileID: 2647510864872935770}
   - {fileID: 186469482417783052}
   allowKnifeHarvest: 0
-  butcherResults: []
   aliveSprite: {fileID: 21300002, guid: 106277f633a313a4990add9de887d387, type: 3}
   deadSprite: {fileID: 21300000, guid: 359410cfbfeb9b548bfc8e3c69653be4, type: 3}
   deadState: 0
@@ -231,6 +231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDirty: 0
   sceneId: 0
   serverOnly: 0
   m_AssetId: 
@@ -421,10 +422,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mobName: 
   knockedDownRotation: 90
+  minTimeBetweenRandomActions: 10
+  maxTimeBetweenRandomActions: 30
   GenericSounds:
   - god1
   - god2
   PlaySoundTime: 3
+--- !u!114 &5407902926204632610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722833055556988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b284d380e1ab74d4683b5ab209e4e257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  butcherTime: 2
+  butcherSound: BladeSlice
+  butcherResults:
+  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
+  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
+  healthSystemCache: {fileID: 0}
 --- !u!1 &2123639465450100608
 GameObject:
   m_ObjectHideFlags: 0
@@ -478,8 +501,19 @@ MonoBehaviour:
   MaxDamage: 200
   Type: 0
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
+  armor:
+    Melee: 0
+    Bullet: 0
+    Laser: 0
+    Energy: 0
+    Bomb: 0
+    Rad: 0
+    Fire: 0
+    Acid: 0
+    Magic: 0
+    Bio: 0
 --- !u!1 &3158074267831632241
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,8 +599,19 @@ MonoBehaviour:
   MaxDamage: 200
   Type: 1
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
+  armor:
+    Melee: 0
+    Bullet: 0
+    Laser: 0
+    Energy: 0
+    Bomb: 0
+    Rad: 0
+    Fire: 0
+    Acid: 0
+    Magic: 0
+    Bio: 0
 --- !u!1 &7921138586108671727
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,6 +657,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:

@@ -134,7 +134,7 @@ MonoBehaviour:
   MaxDamage: 25
   Type: 1
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -200,7 +200,7 @@ MonoBehaviour:
   MaxDamage: 25
   Type: 0
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 3651291330810827203}
   - component: {fileID: 2052235574987344614}
   - component: {fileID: 3611455284223927780}
+  - component: {fileID: -6925270242907098929}
   m_Layer: 12
   m_Name: NPC_Facehugger
   m_TagString: Untagged
@@ -344,8 +345,6 @@ MonoBehaviour:
   - {fileID: 4858358136733543843}
   - {fileID: 4858910464699741597}
   allowKnifeHarvest: 1
-  butcherResults:
-  - {fileID: 6532193109441330816, guid: f4a7f2a5df1b98449bdf7af94d28ca29, type: 3}
   aliveSprite: {fileID: 21300000, guid: 4866054b12864074ca72678ebef13a7c, type: 3}
   deadSprite: {fileID: 21300000, guid: 405c4f6b1b830c64a9786c8bc4974a9a, type: 3}
   deadState: 0
@@ -607,3 +606,22 @@ MonoBehaviour:
   currentStatus: 0
   maskObject: {fileID: 1877733125468713880, guid: 6fecf534029349145b17735e15c9498c,
     type: 3}
+--- !u!114 &-6925270242907098929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4827737755655954553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b284d380e1ab74d4683b5ab209e4e257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  butcherTime: 2
+  butcherSound: BladeSlice
+  butcherResults:
+  - {fileID: 6532193109441330816, guid: f4a7f2a5df1b98449bdf7af94d28ca29, type: 3}
+  healthSystemCache: {fileID: 0}

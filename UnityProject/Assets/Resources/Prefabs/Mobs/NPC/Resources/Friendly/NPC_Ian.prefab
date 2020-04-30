@@ -53,7 +53,7 @@ MonoBehaviour:
   MaxDamage: 200
   Type: 1
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -119,7 +119,7 @@ MonoBehaviour:
   MaxDamage: 200
   Type: 0
   isBleeding: 0
-  livingHealthBehaviour: {fileID: 0}
+  healthSystem: {fileID: 0}
   Severity: 0
   armor:
     Melee: 0
@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 8093655862165673158}
   - component: {fileID: 159138128674865030}
   - component: {fileID: 1698261190327922250}
+  - component: {fileID: -6388149966379691697}
   m_Layer: 12
   m_Name: NPC_Ian
   m_TagString: Untagged
@@ -205,7 +206,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1722833055556988}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 77, y: 55, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4152194380817414287}
@@ -264,9 +265,6 @@ MonoBehaviour:
   - {fileID: 114232649470732454}
   - {fileID: 114804766488326296}
   allowKnifeHarvest: 1
-  butcherResults:
-  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
-  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
   aliveSprite: {fileID: 21300006, guid: e521117653fea244c9645316be5ec3a6, type: 3}
   deadSprite: {fileID: 21300000, guid: 359410cfbfeb9b548bfc8e3c69653be4, type: 3}
   deadState: 0
@@ -527,6 +525,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fa5a8af31085e0498605a5f2590c985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6388149966379691697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722833055556988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b284d380e1ab74d4683b5ab209e4e257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  butcherTime: 2
+  butcherSound: BladeSlice
+  butcherResults:
+  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
+  - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
+  healthSystemCache: {fileID: 0}
 --- !u!1 &7921138586108671727
 GameObject:
   m_ObjectHideFlags: 0
