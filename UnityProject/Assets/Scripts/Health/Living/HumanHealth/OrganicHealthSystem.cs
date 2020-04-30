@@ -6,7 +6,7 @@ using Mirror;
 using UnityEditor;
 
 /// <summary>
-/// Provides central access to the Players Health
+/// Provides central access to the Organic Health, which includes most player race characters
 /// </summary>
 public class OrganicHealthSystem : HealthSystem
 {
