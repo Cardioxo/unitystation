@@ -134,7 +134,8 @@ public class OrganicHealthSystem : HealthSystem
 		Gib();
 	}
 
-	protected override void Gib()
+	[Server]
+	public override void Gib()
 	{
 		Death();
 		EffectsFactory.BloodSplat( transform.position, BloodSplatSize.large, bloodColor );
