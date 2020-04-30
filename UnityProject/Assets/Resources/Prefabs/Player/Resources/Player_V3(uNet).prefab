@@ -752,7 +752,7 @@ GameObject:
   - component: {fileID: 4171332437423579703}
   - component: {fileID: 7831221530082840597}
   - component: {fileID: -5817005449759474551}
-  - component: {fileID: -3583937818799822210}
+  - component: {fileID: 8289070005427859365}
   m_Layer: 8
   m_Name: Player_V3(uNet)
   m_TagString: Untagged
@@ -1316,7 +1316,7 @@ MonoBehaviour:
   syncInterval: 0.1
   offsetPosition: {x: 0, y: -0.6}
   waitToInit: 2
---- !u!114 &-3583937818799822210
+--- !u!114 &8289070005427859365
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1331,11 +1331,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   butcherTime: 2
+  initialButcherSound: Desceration1
   butcherSound: BladeSlice
   butcherResults:
   - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
   - {fileID: 6532193109441330816, guid: 08f2ed80656ab8548b303e79671a18e8, type: 3}
-  healthSystemCache: {fileID: 0}
 --- !u!1 &1147423205297840
 GameObject:
   m_ObjectHideFlags: 0
