@@ -618,8 +618,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   butcherTime: 2
-  butcherSound: BladeSlice
+  initialButcherSound: Desceration1
+  butcherSound: Slice
   butcherResults:
   - {fileID: 6254655335276451647, guid: ab486d104d39e584e935c8a5459a967c, type: 3}
   - {fileID: 6254655335276451647, guid: ab486d104d39e584e935c8a5459a967c, type: 3}
-  healthSystemCache: {fileID: 0}

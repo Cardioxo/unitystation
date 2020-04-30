@@ -14,9 +14,9 @@ public class Harvestable : NetworkBehaviour, ICheckedInteractable<PositionalHand
     private float butcherTime = 2.0f;
 
     [SerializeField] 
-    private string initalButcherSound = "desceration-01";
+    private string initialButcherSound = "Desceration1";
     [SerializeField]
-    private string butcherSound = "slice";
+    private string butcherSound = "BladeSlice";
     
     public GameObject[] butcherResults;
     private HealthSystem healthSystemCache;
@@ -59,7 +59,11 @@ public class Harvestable : NetworkBehaviour, ICheckedInteractable<PositionalHand
         if (!DefaultWillInteract.Default(interaction, side)) return false;
         //Checks if this gameobject is being targeted
         if (interaction.TargetObject != gameObject) return false;
-
+        //Checks if the performer has a knife
+        if (!Validations.HasItemTrait(interaction.HandObject, CommonTraits.Instance.Knife)) return false;
+        //Checks if we're targetting something alive.
+        if (healthSystemCache && !healthSystemCache.IsDead) return false;
+        
         return true;
     }
     public void ServerPerformInteraction(PositionalHandApply interaction)
@@ -88,7 +92,7 @@ public class Harvestable : NetworkBehaviour, ICheckedInteractable<PositionalHand
         //Only play the initial butcher sound if the butcher time is longer than 0.5 seconds
         if (butcherTime > 0.5f)
         {
-            SoundManager.PlayNetworkedAtPos(butcherSound, targetLocation.WorldPositionServer);
+            SoundManager.PlayNetworkedAtPos(initialButcherSound, targetLocation.WorldPositionServer);
         }
 
         void ProgressFinishAction()
