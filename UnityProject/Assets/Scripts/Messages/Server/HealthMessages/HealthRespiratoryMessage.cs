@@ -11,7 +11,7 @@ public class HealthRespiratoryMessage : ServerMessage
 
 	public override void Process()
 	{
-		PlayerManager.LocalPlayerScript.playerHealth?.UpdateClientRespiratoryStats(IsSuffocating);
+		PlayerManager.LocalPlayerScript.PlayerHealthSystem?.UpdateClientRespiratoryStats(IsSuffocating);
 	}
 
 	public static HealthRespiratoryMessage Send(GameObject entityToUpdate, bool IsSuffocating)

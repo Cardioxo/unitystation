@@ -30,7 +30,7 @@ namespace Antagonists
 		/// </summary>
 		protected override bool CheckCompletion()
 		{
-			return !Owner.body.playerHealth.IsDead &&
+			return !Owner.body.PlayerHealthSystem.IsDead &&
 				ValidShuttles.Any( shuttle => Owner.body.registerTile.Matrix.Id == shuttle.MatrixInfo.Id && shuttle.HasWorkingThrusters);
 		}
 	}

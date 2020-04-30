@@ -31,11 +31,11 @@ public class Horn : MonoBehaviour, ICheckedInteractable<HandActivate>, ICheckedI
 		allowUse = true;
 	}
 
-	private IEnumerator CritHonk( PositionalHandApply clickData, LivingHealthBehaviour targetHealth )
+	private IEnumerator CritHonk( PositionalHandApply clickData, HealthSystem targetHealthSystem )
 	{
 		yield return WaitFor.Seconds( 0.02f );
 		SoundManager.PlayNetworkedAtPos( Sound, gameObject.AssumedWorldPosServer(), -1f, true, true, 20, 5, sourceObj: GetHonkSoundObject());
-		targetHealth.ApplyDamageToBodypart( clickData.Performer, CritDamage, AttackType.Energy, DamageType.Brute, BodyPartType.Head );
+		targetHealthSystem.ApplyDamageToBodypart( clickData.Performer, CritDamage, AttackType.Energy, DamageType.Brute, BodyPartType.Head );
 	}
 
 	/// <summary>
@@ -54,7 +54,7 @@ public class Horn : MonoBehaviour, ICheckedInteractable<HandActivate>, ICheckedI
 	{
 		bool inCloseRange = Validations.IsInReach( interaction.TargetVector );
 		var targetObject = interaction.TargetObject;
-		var targetHealth = targetObject != null ? targetObject.GetComponent<LivingHealthBehaviour>() : null;
+		var targetHealth = targetObject != null ? targetObject.GetComponent<HealthSystem>() : null;
 		bool isCrit = Random.Range( 0f, 1f ) <= CritChance;
 
 		// honking in someone's face

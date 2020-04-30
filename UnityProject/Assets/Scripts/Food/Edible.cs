@@ -75,7 +75,7 @@ public class Edible : Consumable, ICheckedInteractable<HandActivate>
 		var feeder = feederGO.GetComponent<PlayerScript>();
 
 		// Show eater message
-		var eaterHungerState = eater.playerHealth.Metabolism.HungerState;
+		var eaterHungerState = eater.PlayerHealthSystem.Metabolism.HungerState;
 		ConsumableTextUtils.SendGenericConsumeMessage(feeder, eater, eaterHungerState, Name, "eat");
 
 		// Check if eater can eat anything
@@ -102,7 +102,7 @@ public class Edible : Consumable, ICheckedInteractable<HandActivate>
 	{
 		SoundManager.PlayNetworkedAtPos(sound, eater.WorldPos, sourceObj: eater.gameObject);
 
-		eater.playerHealth.Metabolism
+		eater.PlayerHealthSystem.Metabolism
 			.AddEffect(new MetabolismEffect(NutritionLevel, 0, MetabolismDuration.Food));
 
 		var feederSlot = feeder.ItemStorage.GetActiveHandSlot();

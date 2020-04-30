@@ -110,7 +110,7 @@ public class Explosion : MonoBehaviour
 
 	private void DamageLivingThings(Vector3Int worldPosition, int damage)
 	{
-		var damagedLivingThings = (MatrixManager.GetAt<LivingHealthBehaviour>(worldPosition, true)
+		var damagedLivingThings = (MatrixManager.GetAt<HealthSystem>(worldPosition, true)
 			//only damage each thing once
 			.Distinct());
 

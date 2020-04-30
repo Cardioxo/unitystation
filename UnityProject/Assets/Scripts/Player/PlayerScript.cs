@@ -27,7 +27,7 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 	/// <summary>
 	/// Will be null if player is a ghost.
 	/// </summary>
-	public PlayerHealth playerHealth { get; set; }
+	public PlayerHealthSystem PlayerHealthSystem { get; set; }
 
 	public PlayerMove playerMove { get; set; }
 	public PlayerSprites playerSprites { get; set; }
@@ -137,7 +137,7 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 		playerSprites = GetComponent<PlayerSprites>();
 		playerNetworkActions = GetComponent<PlayerNetworkActions>();
 		registerTile = GetComponent<RegisterPlayer>();
-		playerHealth = GetComponent<PlayerHealth>();
+		PlayerHealthSystem = GetComponent<PlayerHealthSystem>();
 		pushPull = GetComponent<ObjectBehaviour>();
 		weaponNetworkActions = GetComponent<WeaponNetworkActions>();
 		mouseInputController = GetComponent<MouseInputController>();
@@ -217,9 +217,9 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 		get
 		{
 			var isDeadOrGhost = IsGhost;
-			if (playerHealth != null)
+			if (PlayerHealthSystem != null)
 			{
-				isDeadOrGhost = playerHealth.IsDead;
+				isDeadOrGhost = PlayerHealthSystem.IsDead;
 			}
 			return isDeadOrGhost;
 		}

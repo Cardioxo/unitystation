@@ -257,7 +257,7 @@ namespace NPC
 				StartFleeing(damagedBy);
 			}
 
-			if (health.OverallHealth < -20f)
+			if (HealthSystem.OverallHealth < -20f)
 			{
 				//30% chance the mob decides to flee:
 				if (Random.value < 0.3f)

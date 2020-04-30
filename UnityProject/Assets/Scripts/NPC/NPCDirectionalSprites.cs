@@ -9,7 +9,7 @@ using Mirror;
 /// </summary>
 public class NPCDirectionalSprites : NetworkBehaviour
 {
-	private LivingHealthBehaviour health;
+	private HealthSystem healthSystem;
 	private UprightSprites uprightSprites;
 	public SpriteRenderer spriteRend;
 	public Sprite upSprite;
@@ -37,8 +37,8 @@ public class NPCDirectionalSprites : NetworkBehaviour
 
 	private void EnsureInit()
 	{
-		if (health != null) return;
-		health = GetComponent<LivingHealthBehaviour>();
+		if (healthSystem != null) return;
+		healthSystem = GetComponent<HealthSystem>();
 		uprightSprites = GetComponent<UprightSprites>();
 	}
 
@@ -89,7 +89,7 @@ public class NPCDirectionalSprites : NetworkBehaviour
 	/// <param name="angleDirection"></param>
 	public void CheckSpriteServer(float angleDirection)
 	{
-		if (health.IsDead || health.IsCrit) return;
+		if (healthSystem.IsDead || healthSystem.IsCrit) return;
 
 		if (uprightSprites != null)
 		{

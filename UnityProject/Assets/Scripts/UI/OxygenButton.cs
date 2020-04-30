@@ -37,7 +37,7 @@ public class OxygenButton : TooltipMonoBehaviour
 			return;
 		}
 
-		if (PlayerManager.LocalPlayerScript.playerHealth.IsCrit)
+		if (PlayerManager.LocalPlayerScript.PlayerHealthSystem.IsCrit)
 		{
 			return;
 		}

@@ -488,7 +488,7 @@ public partial class PlayerSync
 		//Client only needs to check whether movement was prevented, specific type of bump doesn't matter
 		bool isClientBump = action.isBump;
 
-		if ( !playerScript.playerHealth || !playerScript.playerHealth.IsSoftCrit )
+		if ( !playerScript.PlayerHealthSystem || !playerScript.PlayerHealthSystem.IsSoftCrit )
 		{
 			SpeedServer = action.isRun ? playerMove.RunSpeed : playerMove.WalkSpeed;
 		}

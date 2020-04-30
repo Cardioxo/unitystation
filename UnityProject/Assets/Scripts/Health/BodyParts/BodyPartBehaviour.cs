@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BodyPartBehaviour : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class BodyPartBehaviour : MonoBehaviour
 	public int MaxDamage = 200;
 	public BodyPartType Type;
 	public bool isBleeding = false;
-	public LivingHealthBehaviour livingHealthBehaviour;
+	[FormerlySerializedAs("livingHealth")] [FormerlySerializedAs("livingHealthBehaviour")] public HealthSystem healthSystem;
 
 	public DamageSeverity Severity; //{ get; private set; }
 	public float OverallDamage => BruteDamage + BurnDamage;
@@ -58,7 +59,7 @@ public class BodyPartBehaviour : MonoBehaviour
 			case DamageType.Brute:
 				BruteDamage -= damage;
 				if(BruteDamage < 20){
-					livingHealthBehaviour.bloodSystem.StopBleeding(this);
+					healthSystem.bloodSystem.StopBleeding(this);
 				}
 				break;
 

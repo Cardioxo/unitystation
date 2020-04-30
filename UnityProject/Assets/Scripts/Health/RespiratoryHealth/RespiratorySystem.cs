@@ -23,7 +23,7 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 	public float suffocationTime = 0f;
 
 	private BloodSystem bloodSystem;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	private Equipment equipment;
 	private ObjectBehaviour objectBehaviour;
 
@@ -38,7 +38,7 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 	void Awake()
 	{
 		bloodSystem = GetComponent<BloodSystem>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 		playerScript = GetComponent<PlayerScript>();
 		registerTile = GetComponent<RegisterTile>();
 		equipment = GetComponent<Equipment>();
@@ -72,7 +72,7 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 
 	private void MonitorSystem()
 	{
-		if (!livingHealthBehaviour.IsDead)
+		if (!healthSystem.IsDead)
 		{
 			Vector3Int position = objectBehaviour.AssumedWorldPositionServer().RoundToInt();
 			MetaDataNode node = MatrixManager.GetMetaDataAt(position);
@@ -89,7 +89,7 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 				temperature = 293.15f;
 			}
 
-			if(livingHealthBehaviour.OverallHealth >= HealthThreshold.SoftCrit){
+			if(healthSystem.OverallHealth >= HealthThreshold.SoftCrit){
 				if (Breathe(node))
 					{
 						AtmosManager.Update(node);
@@ -223,6 +223,6 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 
 	private void ApplyDamage(float amount, DamageType damageType)
 	{
-		livingHealthBehaviour.ApplyDamage(null, amount, AttackType.Internal, damageType);
+		healthSystem.ApplyDamage(null, amount, AttackType.Internal, damageType);
 	}
 }

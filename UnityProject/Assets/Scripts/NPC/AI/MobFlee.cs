@@ -43,7 +43,7 @@ public class MobFlee : MobPathFinder
 
 	protected override void FollowCompleted()
 	{
-		if (health.IsDead || health.IsCrit || health.IsCardiacArrest || fleeTarget == null) return;
+		if (HealthSystem.IsDead || HealthSystem.IsCrit || HealthSystem.IsCardiacArrest || fleeTarget == null) return;
 		TryToFlee();
 	}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Light2D;
 using UnityEngine;
+using Health;
 
 /// <summary>
 /// Handle displaying the sprites related to player, which includes underwear and the body.
@@ -35,9 +36,9 @@ public class PlayerSprites : MonoBehaviour
 	private Directional directional;
 	private BurningDirectionalOverlay engulfedBurningOverlay;
 	private BurningDirectionalOverlay partialBurningOverlay;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	private PlayerScript playerScript;
-	private PlayerHealth playerHealth;
+	private OrganicHealthSystem playerHealthSystem;
 	private PlayerSync playerSync;
 
 	private ClothingHideFlags hideClothingFlags = ClothingHideFlags.HIDE_NONE;
@@ -52,7 +53,7 @@ public class PlayerSprites : MonoBehaviour
 	protected void Awake()
 	{
 		directional = GetComponent<Directional>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 
 		foreach (ClothingItem c in GetComponentsInChildren<ClothingItem>())
 		{
@@ -71,8 +72,8 @@ public class PlayerSprites : MonoBehaviour
 		AddBurningOverlayGameObjects();
 
 		directional.OnDirectionChange.AddListener(OnDirectionChange);
-		livingHealthBehaviour.OnClientFireStacksChange.AddListener(OnClientFireStacksChange);
-		OnClientFireStacksChange(livingHealthBehaviour.FireStacks);
+		healthSystem.OnClientFireStacksChange.AddListener(OnClientFireStacksChange);
+		OnClientFireStacksChange(healthSystem.FireStacks);
 	}
 
 	/// <summary>
@@ -221,7 +222,7 @@ public class PlayerSprites : MonoBehaviour
 			c.Direction = direction;
 		}
 
-		UpdateBurningOverlays(livingHealthBehaviour.FireStacks, direction);
+		UpdateBurningOverlays(healthSystem.FireStacks, direction);
 	}
 
 	/// <summary>

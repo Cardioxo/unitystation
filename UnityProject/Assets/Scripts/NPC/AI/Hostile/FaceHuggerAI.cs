@@ -252,7 +252,7 @@ namespace NPC
 				return;
 			}
 
-			if (health.OverallHealth < -20f)
+			if (HealthSystem.OverallHealth < -20f)
 			{
 				//30% chance the mob decides to flee:
 				if (Random.value < 0.3f)
@@ -295,7 +295,7 @@ namespace NPC
 			}
 		}
 
-		private void TryFacehug(Vector3 dir, LivingHealthBehaviour player)
+		private void TryFacehug(Vector3 dir, HealthSystem player)
 		{
 			var playerInventory = player.gameObject.GetComponent<PlayerScript>()?.Equipment;
 
@@ -391,9 +391,9 @@ namespace NPC
 			return antiHugger;
 		}
 
-		public override void ActOnLiving(Vector3 dir, LivingHealthBehaviour healthBehaviour)
+		public override void ActOnLiving(Vector3 dir, HealthSystem healthSystem)
 		{
-			TryFacehug(dir, healthBehaviour);
+			TryFacehug(dir, healthSystem);
 		}
 
 		public bool WillInteract(HandApply interaction, NetworkSide side)

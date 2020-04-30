@@ -195,7 +195,7 @@ namespace NPC
 			foreach (Collider2D coll in hits)
 			{
 				if (coll.gameObject != gameObject && coll.gameObject.GetComponent<CatAI>() != null
-				                                  && !coll.gameObject.GetComponent<LivingHealthBehaviour>().IsDead)
+				                                  && !coll.gameObject.GetComponent<HealthSystem>().IsDead)
 				{
 					return coll.gameObject.GetComponent<CatAI>();
 				}

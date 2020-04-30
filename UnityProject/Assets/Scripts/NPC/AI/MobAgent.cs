@@ -12,7 +12,7 @@ public class MobAgent : Agent
 	protected CustomNetTransform cnt;
 	protected RegisterObject registerObj;
 	protected NPCDirectionalSprites dirSprites;
-	protected LivingHealthBehaviour health; // For living beings
+	protected HealthSystem HealthSystem; // For living beings
 	protected Integrity integrity; // For bots
 
 	private Vector3 startPos;
@@ -34,7 +34,7 @@ public class MobAgent : Agent
 		cnt = GetComponent<CustomNetTransform>();
 		registerObj = GetComponent<RegisterObject>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
-		health = GetComponent<LivingHealthBehaviour>();
+		HealthSystem = GetComponent<HealthSystem>();
 		integrity = GetComponent<Integrity>();
 		agentParameters.onDemandDecision = true;
 	}
@@ -131,9 +131,9 @@ public class MobAgent : Agent
 	void MonitorDecisionMaking()
 	{
 		// Only living mobs have health.  Some like the bots have integrity instead.
-		if (health != null) // Living mob
+		if (HealthSystem != null) // Living mob
 		{
-			if (health.IsDead || health.IsCrit || health.IsCardiacArrest)
+			if (HealthSystem.IsDead || HealthSystem.IsCrit || HealthSystem.IsCardiacArrest)
 			{
 				// Can't do anything this NPC is not capable of movement
 				return;

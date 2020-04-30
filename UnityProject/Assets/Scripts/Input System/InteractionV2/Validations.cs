@@ -144,7 +144,7 @@ public static class Validations
 		if ((!allowCuffed && playerScript.playerMove.IsCuffed) ||
 		    playerScript.IsGhost ||
 		    !playerScript.playerMove.allowInput ||
-		    !CanInteractByConsciousState(playerScript.playerHealth, allowSoftCrit, side))
+		    !CanInteractByConsciousState(playerScript.PlayerHealthSystem, allowSoftCrit, side))
 		{
 			return false;
 		}
@@ -183,16 +183,16 @@ public static class Validations
 		return true;
 	}
 
-	private static bool CanInteractByConsciousState(PlayerHealth playerHealth, bool allowSoftCrit, NetworkSide side)
+	private static bool CanInteractByConsciousState(PlayerHealthSystem playerHealthSystem, bool allowSoftCrit, NetworkSide side)
 	{
 		if (side == NetworkSide.Client)
 		{
 			//we only know our own conscious state, so assume true if it's not our local player
-			if (playerHealth.gameObject != PlayerManager.LocalPlayer) return true;
+			if (playerHealthSystem.gameObject != PlayerManager.LocalPlayer) return true;
 		}
 
-		return playerHealth.ConsciousState == ConsciousState.CONSCIOUS ||
-		       playerHealth.ConsciousState == ConsciousState.BARELY_CONSCIOUS && allowSoftCrit;
+		return playerHealthSystem.ConsciousState == ConsciousState.CONSCIOUS ||
+		       playerHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS && allowSoftCrit;
 	}
 
 	#region CanApply
@@ -601,7 +601,7 @@ public static class Validations
 		else
 		{
 			//find their exact conscious state, slipping state, cuffed state
-			var playerHealth = playerScript.playerHealth;
+			var playerHealth = playerScript.PlayerHealthSystem;
 			var registerPlayer = playerScript.registerTile;
 			var playerMove = playerScript.playerMove;
 			if (playerHealth == null || playerMove == null || registerPlayer == null) return false;

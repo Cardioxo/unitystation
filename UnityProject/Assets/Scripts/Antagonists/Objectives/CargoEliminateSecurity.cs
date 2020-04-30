@@ -24,8 +24,8 @@ namespace Antagonists
 					                                           || playerDetails.Job == JobType.DETECTIVE
 					                                           || playerDetails.Job == JobType.WARDEN)
 					{
-						if(playerDetails.Script == null || playerDetails.Script.playerHealth == null) continue;
-						if (!playerDetails.Script.playerHealth.IsDead)
+						if(playerDetails.Script == null || playerDetails.Script.PlayerHealthSystem == null) continue;
+						if (!playerDetails.Script.PlayerHealthSystem.IsDead)
 						{
 							return false;
 						}

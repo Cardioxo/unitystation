@@ -95,7 +95,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 		if (!playerMove.allowInput ||
 			playerScript.IsGhost ||
 			!victim ||
-			!playerScript.playerHealth.serverPlayerConscious
+			!playerScript.PlayerHealthSystem.serverPlayerConscious
 		)
 		{
 			return;
@@ -144,7 +144,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 		{
 			//a regular object being attacked
 
-			LivingHealthBehaviour victimHealth = victim.GetComponent<LivingHealthBehaviour>();
+			HealthSystem victimHealthSystem = victim.GetComponent<HealthSystem>();
 
 			var integrity = victim.GetComponent<Integrity>();
 			if (integrity != null)
@@ -173,9 +173,9 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 				// Punches have 90% chance to hit, otherwise it is a miss.
 				if (isWeapon || 90 >= rng.Next(1, 100))
 				{
-					if (victimHealth == null || gameObject == null) return;
+					if (victimHealthSystem == null || gameObject == null) return;
 					// The attack hit.
-					victimHealth.ApplyDamageToBodypart(gameObject, (int)damage, AttackType.Melee, damageType, damageZone);
+					victimHealthSystem.ApplyDamageToBodypart(gameObject, (int)damage, AttackType.Melee, damageType, damageZone);
 					didHit = true;
 				}
 				else
@@ -245,7 +245,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 	[Command]
 	private void CmdRequestInputActivation()
 	{
-		if (playerScript.playerHealth.serverPlayerConscious)
+		if (playerScript.PlayerHealthSystem.serverPlayerConscious)
 		{
 			playerMove.allowInput = true;
 		}

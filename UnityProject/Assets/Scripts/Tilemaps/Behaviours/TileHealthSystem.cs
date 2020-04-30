@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 
 
-public class TileHealthBehaviour : LivingHealthBehaviour
+public class TileHealthSystem : HealthSystem
 {
 	protected override void OnDeathActions()
 	{

@@ -7,7 +7,7 @@ public class Pettable : MonoBehaviour, ICheckedInteractable<HandApply>
 {
 	public bool WillInteract( HandApply interaction, NetworkSide side )
 	{
-		var NPCHealth = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var NPCHealth = interaction.TargetObject.GetComponent<HealthSystem>();
 		if (!DefaultWillInteract.Default(interaction, side) || NPCHealth.IsDead || interaction.Intent != Intent.Help) return false;
  
 		return true;

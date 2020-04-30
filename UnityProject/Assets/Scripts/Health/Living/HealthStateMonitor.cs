@@ -22,7 +22,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	bool isHuskCache;
 	int brainDamageCache;
 
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem healthSystem;
 	float tickRate = 1f;
 	float tick = 0f;
 	bool init = false;
@@ -32,7 +32,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	/// ---------------------------
 	void Awake()
 	{
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		healthSystem = GetComponent<HealthSystem>();
 	}
 
 	public override void OnStartServer()
@@ -43,26 +43,26 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void InitServerCache()
 	{
-		overallHealthCache = livingHealthBehaviour.OverallHealth;
-		consciousStateCache = livingHealthBehaviour.ConsciousState;
-		isSuffocatingCache = livingHealthBehaviour.respiratorySystem.IsSuffocating;
-		temperatureCache = livingHealthBehaviour.respiratorySystem.temperature;
-		pressureCache = livingHealthBehaviour.respiratorySystem.pressure;
+		overallHealthCache = healthSystem.OverallHealth;
+		consciousStateCache = healthSystem.ConsciousState;
+		isSuffocatingCache = healthSystem.respiratorySystem.IsSuffocating;
+		temperatureCache = healthSystem.respiratorySystem.temperature;
+		pressureCache = healthSystem.respiratorySystem.pressure;
 		UpdateBloodCaches();
-		if (livingHealthBehaviour.brainSystem != null)
+		if (healthSystem.brainSystem != null)
 		{
-			isHuskCache = livingHealthBehaviour.brainSystem.IsHuskServer;
-			brainDamageCache = livingHealthBehaviour.brainSystem.BrainDamageAmt;
+			isHuskCache = healthSystem.brainSystem.IsHuskServer;
+			brainDamageCache = healthSystem.brainSystem.BrainDamageAmt;
 		}
 		init = true;
 	}
 
 	void UpdateBloodCaches()
 	{
-		heartRateCache = livingHealthBehaviour.bloodSystem.HeartRate;
-		bloodLevelCache = livingHealthBehaviour.bloodSystem.BloodLevel;
-		oxygenDamageCache = livingHealthBehaviour.bloodSystem.OxygenDamage;
-		toxinLevelCache = livingHealthBehaviour.bloodSystem.ToxinLevel;
+		heartRateCache = healthSystem.bloodSystem.HeartRate;
+		bloodLevelCache = healthSystem.bloodSystem.BloodLevel;
+		oxygenDamageCache = healthSystem.bloodSystem.OxygenDamage;
+		toxinLevelCache = healthSystem.bloodSystem.ToxinLevel;
 	}
 
 	/// ---------------------------
@@ -100,7 +100,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	void MonitorNonCrucialStats()
 	{
 		CheckNonCrucialBloodHealth();
-		if (livingHealthBehaviour.brainSystem != null)
+		if (healthSystem.brainSystem != null)
 		{
 			CheckNonCrucialBrainHealth();
 		}
@@ -108,53 +108,53 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void CheckConsciousState()
 	{
-		if (consciousStateCache != livingHealthBehaviour.ConsciousState)
+		if (consciousStateCache != healthSystem.ConsciousState)
 		{
-			consciousStateCache = livingHealthBehaviour.ConsciousState;
+			consciousStateCache = healthSystem.ConsciousState;
 			SendConsciousUpdate();
 		}
 	}
 
 	void CheckOverallHealth()
 	{
-		if (overallHealthCache != livingHealthBehaviour.OverallHealth)
+		if (overallHealthCache != healthSystem.OverallHealth)
 		{
-			overallHealthCache = livingHealthBehaviour.OverallHealth;
+			overallHealthCache = healthSystem.OverallHealth;
 			SendOverallUpdate();
 		}
 	}
 
 	void CheckRespiratoryHealth()
 	{
-		if (isSuffocatingCache != livingHealthBehaviour.respiratorySystem.IsSuffocating)
+		if (isSuffocatingCache != healthSystem.respiratorySystem.IsSuffocating)
 		{
-			isSuffocatingCache = livingHealthBehaviour.respiratorySystem.IsSuffocating;
+			isSuffocatingCache = healthSystem.respiratorySystem.IsSuffocating;
 			SendRespiratoryUpdate();
 		}
 	}
 
 	void CheckTemperature()
 	{
-		if (temperatureCache != livingHealthBehaviour.respiratorySystem.temperature)
+		if (temperatureCache != healthSystem.respiratorySystem.temperature)
 		{
-			temperatureCache = livingHealthBehaviour.respiratorySystem.temperature;
+			temperatureCache = healthSystem.respiratorySystem.temperature;
 			SendTemperatureUpdate();
 		}
 	}
 
 	void CheckPressure()
 	{
-		if (pressureCache != livingHealthBehaviour.respiratorySystem.pressure)
+		if (pressureCache != healthSystem.respiratorySystem.pressure)
 		{
-			pressureCache = livingHealthBehaviour.respiratorySystem.pressure;
+			pressureCache = healthSystem.respiratorySystem.pressure;
 			SendPressureUpdate();
 		}
 	}
 
 	void CheckCruicialBloodHealth()
 	{
-		if (toxinLevelCache != livingHealthBehaviour.bloodSystem.ToxinLevel ||
-			heartRateCache != livingHealthBehaviour.bloodSystem.HeartRate)
+		if (toxinLevelCache != healthSystem.bloodSystem.ToxinLevel ||
+			heartRateCache != healthSystem.bloodSystem.HeartRate)
 		{
 			UpdateBloodCaches();
 			SendBloodUpdate();
@@ -163,8 +163,8 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void CheckNonCrucialBloodHealth()
 	{
-		if (bloodLevelCache != livingHealthBehaviour.bloodSystem.BloodLevel ||
-			oxygenDamageCache != livingHealthBehaviour.bloodSystem.OxygenDamage)
+		if (bloodLevelCache != healthSystem.bloodSystem.BloodLevel ||
+			oxygenDamageCache != healthSystem.bloodSystem.OxygenDamage)
 		{
 			UpdateBloodCaches();
 			SendBloodUpdate();
@@ -173,11 +173,11 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void CheckNonCrucialBrainHealth()
 	{
-		if (isHuskCache != livingHealthBehaviour.brainSystem.IsHuskServer ||
-			brainDamageCache != livingHealthBehaviour.brainSystem.BrainDamageAmt)
+		if (isHuskCache != healthSystem.brainSystem.IsHuskServer ||
+			brainDamageCache != healthSystem.brainSystem.BrainDamageAmt)
 		{
-			isHuskCache = livingHealthBehaviour.brainSystem.IsHuskServer;
-			brainDamageCache = livingHealthBehaviour.brainSystem.BrainDamageAmt;
+			isHuskCache = healthSystem.brainSystem.IsHuskServer;
+			brainDamageCache = healthSystem.brainSystem.BrainDamageAmt;
 			SendBrainUpdate();
 		}
 	}
@@ -188,12 +188,12 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void SendConsciousUpdate()
 	{
-		HealthConsciousMessage.SendToAll(gameObject, livingHealthBehaviour.ConsciousState);
+		HealthConsciousMessage.SendToAll(gameObject, healthSystem.ConsciousState);
 	}
 
 	void SendOverallUpdate()
 	{
-		HealthOverallMessage.Send(gameObject, gameObject, livingHealthBehaviour.OverallHealth);
+		HealthOverallMessage.Send(gameObject, gameObject, healthSystem.OverallHealth);
 	}
 
 	void SendBloodUpdate()
@@ -204,10 +204,10 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void SendBrainUpdate()
 	{
-		if (livingHealthBehaviour.brainSystem != null)
+		if (healthSystem.brainSystem != null)
 		{
-			HealthBrainMessage.SendToAll(gameObject, livingHealthBehaviour.brainSystem.IsHuskServer,
-				livingHealthBehaviour.brainSystem.BrainDamageAmt);
+			HealthBrainMessage.SendToAll(gameObject, healthSystem.brainSystem.IsHuskServer,
+				healthSystem.brainSystem.BrainDamageAmt);
 		}
 	}
 
@@ -217,12 +217,12 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void SendOverallUpdate(GameObject requestor)
 	{
-		HealthOverallMessage.Send(requestor, gameObject, livingHealthBehaviour.OverallHealth);
+		HealthOverallMessage.Send(requestor, gameObject, healthSystem.OverallHealth);
 	}
 
 	void SendConsciousUpdate(GameObject requestor)
 	{
-		HealthConsciousMessage.Send(requestor, gameObject, livingHealthBehaviour.ConsciousState);
+		HealthConsciousMessage.Send(requestor, gameObject, healthSystem.ConsciousState);
 	}
 
 	void SendBloodUpdate(GameObject requestor)
@@ -248,10 +248,10 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void SendBrainUpdate(GameObject requestor)
 	{
-		if (livingHealthBehaviour.brainSystem != null)
+		if (healthSystem.brainSystem != null)
 		{
-			HealthBrainMessage.Send(requestor, gameObject, livingHealthBehaviour.brainSystem.IsHuskServer,
-				livingHealthBehaviour.brainSystem.BrainDamageAmt);
+			HealthBrainMessage.Send(requestor, gameObject, healthSystem.brainSystem.IsHuskServer,
+				healthSystem.brainSystem.BrainDamageAmt);
 		}
 	}
 
@@ -296,18 +296,18 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 		yield return WaitFor.Seconds(.1f);
 
-		if (livingHealthBehaviour.brainSystem != null)
+		if (healthSystem.brainSystem != null)
 		{
 			SendBrainUpdate(requestor);
 			yield return WaitFor.Seconds(.1f);
 		}
 
-		for (int i = 0; i < livingHealthBehaviour.BodyParts.Count; i++)
+		for (int i = 0; i < healthSystem.BodyParts.Count; i++)
 		{
 			HealthBodyPartMessage.Send(requestor, gameObject,
-				livingHealthBehaviour.BodyParts[i].Type,
-				livingHealthBehaviour.BodyParts[i].BruteDamage,
-				livingHealthBehaviour.BodyParts[i].BurnDamage);
+				healthSystem.BodyParts[i].Type,
+				healthSystem.BodyParts[i].BruteDamage,
+				healthSystem.BodyParts[i].BurnDamage);
 			yield return WaitFor.Seconds(.1f);
 		}
 	}

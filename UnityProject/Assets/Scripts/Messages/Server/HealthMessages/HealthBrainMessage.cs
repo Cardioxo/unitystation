@@ -14,7 +14,7 @@ public class HealthBrainMessage : ServerMessage
 	public override void Process()
 	{
 		LoadNetworkObject(EntityToUpdate);
-		if(NetworkObject != null) NetworkObject.GetComponent<LivingHealthBehaviour>().UpdateClientBrainStats(IsHusk, BrainDamage);
+		if(NetworkObject != null) NetworkObject.GetComponent<HealthSystem>().UpdateClientBrainStats(IsHusk, BrainDamage);
 	}
 
 	public static HealthBrainMessage Send(GameObject recipient, GameObject entityToUpdate, bool isHusk, int brainDamage)

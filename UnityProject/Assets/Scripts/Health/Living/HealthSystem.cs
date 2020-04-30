@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 /// Monitors and calculates health
 /// </summary>
 [RequireComponent(typeof(HealthStateMonitor))]
-public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireExposable, IExaminable, IServerSpawn
+public abstract class HealthSystem : NetworkBehaviour, IHealth, IFireExposable, IExaminable, IServerSpawn
 {
 	private static readonly float GIB_THRESHOLD = 200f;
 	//damage incurred per tick per fire stack
@@ -749,7 +749,7 @@ public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireEx
 		foreach (BodyPartBehaviour bodyPart in BodyParts)
 		{
 			bodyPart.RestoreDamage();
-			bodyPart.livingHealthBehaviour = this;
+			bodyPart.healthSystem = this;
 		}
 	}
 
@@ -856,7 +856,6 @@ public static class HealthThreshold
 	public const int Dead = -100;
 	public const int OxygenPassOut = 50;
 }
-
 /// <summary>
 /// Event which fires when conscious state changes, provides the old state and the new state
 /// </summary>

@@ -2,7 +2,7 @@
 using UnityEngine;
 using Mirror;
 
-public class SimpleAnimal : LivingHealthBehaviour
+public class SimpleAnimal : HealthSystem
 {
 	public Sprite aliveSprite;
 

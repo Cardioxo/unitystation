@@ -132,7 +132,7 @@ public class BulletBehaviour : MonoBehaviour
 		}
 
 		//body or object?
-		var livingHealth = coll.GetComponent<LivingHealthBehaviour>();
+		var livingHealth = coll.GetComponent<HealthSystem>();
 		var integrity = coll.GetComponent<Integrity>();
 		if (integrity != null)
 		{

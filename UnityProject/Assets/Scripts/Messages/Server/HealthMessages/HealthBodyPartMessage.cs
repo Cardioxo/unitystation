@@ -16,7 +16,7 @@ public class HealthBodyPartMessage : ServerMessage
 	{
 		LoadNetworkObject(EntityToUpdate);
 		if (NetworkObject != null){
-			NetworkObject.GetComponent<LivingHealthBehaviour>().UpdateClientBodyPartStats(BodyPart, BruteDamage, BurnDamage);
+			NetworkObject.GetComponent<HealthSystem>().UpdateClientBodyPartStats(BodyPart, BruteDamage, BurnDamage);
 		}
 	}
 

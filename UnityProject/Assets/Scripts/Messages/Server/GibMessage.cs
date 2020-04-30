@@ -5,7 +5,7 @@ public class GibMessage : ServerMessage
 {
 	public override void Process()
 	{
-		foreach (LivingHealthBehaviour living in Object.FindObjectsOfType<LivingHealthBehaviour>())
+		foreach (HealthSystem living in Object.FindObjectsOfType<HealthSystem>())
 		{
 			living.Death();
 		}

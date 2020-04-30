@@ -54,7 +54,7 @@ namespace Antagonists
 
 		protected override bool CheckCompletion()
 		{
-			return (Target.playerHealth == null || Target.playerHealth.IsDead);
+			return (Target.PlayerHealthSystem == null || Target.PlayerHealthSystem.IsDead);
 		}
 	}
 }
