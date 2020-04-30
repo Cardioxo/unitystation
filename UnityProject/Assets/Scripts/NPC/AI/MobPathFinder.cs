@@ -1,6 +1,7 @@
 ﻿using PathFinding;
 using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 public class MobPathFinder : MonoBehaviour

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 
 /// <summary>
 /// Main behavior for a bullet, handles shooting and managing the trail rendering. Collision events are fired on

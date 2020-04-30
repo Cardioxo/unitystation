@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 public class BodyPartBehaviour : MonoBehaviour

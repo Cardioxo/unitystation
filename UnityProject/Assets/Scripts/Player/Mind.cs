@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Mirror;
 using Antagonists;
+using Health;
 
 /// <summary>
 /// IC character information (job role, antag info, real name, etc). A body and their ghost link to the same mind
