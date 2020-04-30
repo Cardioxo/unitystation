@@ -60,9 +60,9 @@ public class AdminToolRefreshMessage : ServerMessage
 			entry.currentJob = player.Job.ToString();
 			entry.accountName = player.Username;
 			entry.ipAddress = player.Connection.address;
-			if (player.Script != null && player.Script.PlayerHealthSystem != null)
+			if (player.Script != null && player.Script.OrganicHealthSystem != null)
 			{
-				entry.isAlive = player.Script.PlayerHealthSystem.ConsciousState != ConsciousState.DEAD;
+				entry.isAlive = player.Script.OrganicHealthSystem.ConsciousState != ConsciousState.DEAD;
 			} else
 			{
 				entry.isAdmin = false;

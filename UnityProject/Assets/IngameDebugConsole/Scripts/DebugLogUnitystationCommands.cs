@@ -266,7 +266,7 @@ namespace IngameDebugConsole
 		{
 			if (CustomNetworkManager.Instance._isServer)
 			{
-				PlayerManager.LocalPlayerScript.PlayerHealthSystem.ApplyDamage(null, 99999f, AttackType.Internal, DamageType.Brute);
+				PlayerManager.LocalPlayerScript.OrganicHealthSystem.ApplyDamage(null, 99999f, AttackType.Internal, DamageType.Brute);
 			}
 		}
 #if UNITY_EDITOR
@@ -401,7 +401,7 @@ namespace IngameDebugConsole
 			if (CustomNetworkManager.Instance._isServer)
 			{
 				var playerScript = PlayerManager.LocalPlayerScript;
-				var health = playerScript.PlayerHealthSystem;
+				var health = playerScript.OrganicHealthSystem;
 				foreach (var bodyPart in health.BodyParts)
 				{
 					bodyPart.HealDamage(200, DamageType.Brute);

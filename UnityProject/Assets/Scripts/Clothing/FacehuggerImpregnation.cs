@@ -69,7 +69,7 @@ namespace Clothing
 			}
 
 			player.ServerStun(coitusTime, true);
-			StartCoroutine(Coitus(player.PlayerScript.PlayerHealthSystem));
+			StartCoroutine(Coitus(player.PlayerScript.OrganicHealthSystem));
 		}
 
 		private void OnReleasing()
@@ -82,26 +82,26 @@ namespace Clothing
 			StartCoroutine(Release());
 		}
 
-		private IEnumerator Coitus(PlayerHealthSystem player)
+		private IEnumerator Coitus(OrganicHealthSystem organic)
 		{
 			yield return WaitFor.Seconds(coitusTime);
-			Pregnancy(player);
+			Pregnancy(organic);
 			yield return WaitFor.EndOfFrame;
 		}
 
-		private async Task Pregnancy(PlayerHealthSystem player)
+		private async Task Pregnancy(OrganicHealthSystem organic)
 		{
 			KillHugger();
 			await Task.Delay(TimeSpan.FromSeconds(pregnancyTime));
 			//TODO check if the larvae was removed from stomach
-			player.ApplyDamageToBodypart(
+			organic.ApplyDamageToBodypart(
 				gameObject,
 				200,
 				AttackType.Internal,
 				DamageType.Brute,
 				BodyPartType.Chest);
 
-			Spawn.ServerPrefab(larvae, player.gameObject.RegisterTile().WorldPositionServer);
+			Spawn.ServerPrefab(larvae, organic.gameObject.RegisterTile().WorldPositionServer);
 		}
 
 		private IEnumerator Release()
@@ -146,7 +146,7 @@ namespace Clothing
 			if ((CustomNetworkManager.Instance._isServer && GameData.IsHeadlessServer)
 			    || playerScript == null
 			    || playerScript.playerNetworkActions == null
-			    || playerScript.PlayerHealthSystem == null)
+			    || playerScript.OrganicHealthSystem == null)
 			{
 				return;
 			}

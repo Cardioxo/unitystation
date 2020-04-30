@@ -345,7 +345,7 @@ public partial class PlayerSync
 	{
 		if ( !playerScript.IsGhost )
 		{
-			if ( !playerScript.PlayerHealthSystem.IsSoftCrit )
+			if ( !playerScript.OrganicHealthSystem.IsSoftCrit )
 			{
 				SpeedClient = action.isRun ? playerMove.RunSpeed : playerMove.WalkSpeed;
 			}

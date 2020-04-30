@@ -62,7 +62,7 @@ public class ControlDisplays : MonoBehaviour
 			yield return WaitFor.EndOfFrame;
 		}
 
-		if (PlayerManager.LocalPlayerScript.PlayerHealthSystem == null)
+		if (PlayerManager.LocalPlayerScript.OrganicHealthSystem == null)
 		{
 			GhostUI();
 		}
@@ -83,13 +83,13 @@ public class ControlDisplays : MonoBehaviour
 		if (CustomNetworkManager.Instance == null) return;
 		if (CustomNetworkManager.Instance._isServer) return;
 		if (PlayerManager.LocalPlayerScript == null) return;
-		if (PlayerManager.LocalPlayerScript.PlayerHealthSystem == null) return;
-		if (!PlayerManager.LocalPlayerScript.PlayerHealthSystem.IsDead &&
+		if (PlayerManager.LocalPlayerScript.OrganicHealthSystem == null) return;
+		if (!PlayerManager.LocalPlayerScript.OrganicHealthSystem.IsDead &&
 		    !UIManager.PlayerHealthUI.gameObject.activeInHierarchy)
 		{
 			UIManager.PlayerHealthUI.gameObject.SetActive(true);
 		}
-		if (!PlayerManager.LocalPlayerScript.PlayerHealthSystem.IsDead &&
+		if (!PlayerManager.LocalPlayerScript.OrganicHealthSystem.IsDead &&
 		    !UIManager.PlayerHealthUI.humanUI)
 		{
 			UIManager.PlayerHealthUI.humanUI = true;

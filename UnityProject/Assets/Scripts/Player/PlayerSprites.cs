@@ -37,7 +37,7 @@ public class PlayerSprites : MonoBehaviour
 	private BurningDirectionalOverlay partialBurningOverlay;
 	private HealthSystem healthSystem;
 	private PlayerScript playerScript;
-	private PlayerHealthSystem playerHealthSystem;
+	private OrganicHealthSystem organicHealthSystem;
 	private PlayerSync playerSync;
 
 	private ClothingHideFlags hideClothingFlags = ClothingHideFlags.HIDE_NONE;

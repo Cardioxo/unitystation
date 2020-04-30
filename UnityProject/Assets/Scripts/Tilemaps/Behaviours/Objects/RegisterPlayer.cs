@@ -162,9 +162,9 @@ public class RegisterPlayer : RegisterTile, IServerSpawn
 		// Don't slip while player's consious state is crit, soft crit, or dead.
 		if (IsSlippingServer
 			|| !slipWhileWalking && playerScript.PlayerSync.SpeedServer <= playerScript.playerMove.WalkSpeed
-			|| playerScript.PlayerHealthSystem.IsCrit
-			|| playerScript.PlayerHealthSystem.IsSoftCrit
-			|| playerScript.PlayerHealthSystem.IsDead)
+			|| playerScript.OrganicHealthSystem.IsCrit
+			|| playerScript.OrganicHealthSystem.IsSoftCrit
+			|| playerScript.OrganicHealthSystem.IsDead)
 		{
 			return;
 		}
@@ -209,15 +209,15 @@ public class RegisterPlayer : RegisterTile, IServerSpawn
 		IsSlippingServer = false;
 
 		// Do not raise up a dead body
-		if (playerScript.PlayerHealthSystem.ConsciousState == ConsciousState.CONSCIOUS)
+		if (playerScript.OrganicHealthSystem.ConsciousState == ConsciousState.CONSCIOUS)
 		{
 			SyncIsLayingDown(isLayingDown, false);
 		}
 
 		OnSlipChangeServer.Invoke(oldVal, IsSlippingServer);
 
-		if (playerScript.PlayerHealthSystem.ConsciousState == ConsciousState.CONSCIOUS
-			 || playerScript.PlayerHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS)
+		if (playerScript.OrganicHealthSystem.ConsciousState == ConsciousState.CONSCIOUS
+			 || playerScript.OrganicHealthSystem.ConsciousState == ConsciousState.BARELY_CONSCIOUS)
 		{
 			playerScript.playerMove.allowInput = true;
 		}

@@ -177,8 +177,8 @@ public class StandardProgressAction : IProgressAction
 		//interrupt if slipped
 		eventRegistry.Register(playerScript.registerTile.OnSlipChangeServer, OnSlipChange);
 		//interrupt if conscious state changes
-		eventRegistry.Register(playerScript.PlayerHealthSystem.OnConsciousStateChangeServer, OnConsciousStateChange);
-		initialConsciousState = playerScript.PlayerHealthSystem.ConsciousState;
+		eventRegistry.Register(playerScript.OrganicHealthSystem.OnConsciousStateChangeServer, OnConsciousStateChange);
+		initialConsciousState = playerScript.OrganicHealthSystem.ConsciousState;
 		//interrupt if player moves at all
 		eventRegistry.Register(playerScript.registerTile.OnLocalPositionChangedServer, OnLocalPositionChanged);
 		//interrupt if player turns away and turning is not allowed
@@ -257,7 +257,7 @@ public class StandardProgressAction : IProgressAction
 	private bool CanPlayerStillProgress()
 	{
 		//note: doesn't check cross matrix situations.
-		return playerScript.PlayerHealthSystem.ConsciousState == initialConsciousState &&
+		return playerScript.OrganicHealthSystem.ConsciousState == initialConsciousState &&
 		       !playerScript.playerMove.IsCuffed &&
 		       !playerScript.registerTile.IsSlippingServer &&
 		       (progressActionConfig.AllowTurning ||

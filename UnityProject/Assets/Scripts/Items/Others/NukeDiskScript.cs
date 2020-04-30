@@ -99,7 +99,7 @@ public class NukeDiskScript : NetworkBehaviour
 			{
 				return true;
 			}
-			if (player.GetComponent<PlayerHealthSystem>().IsDead)
+			if (player.GetComponent<OrganicHealthSystem>().IsDead)
 			{
 				return true;
 			}
