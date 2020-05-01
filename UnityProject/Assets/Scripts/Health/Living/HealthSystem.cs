@@ -36,14 +36,30 @@ namespace Health
 		/// </summary>
 		public int mobID { get; private set; }
 
-		public float maxHealth = 100;
+		[Tooltip("Max amount of HP this creature has overall.")]
+		public float MaxHealth = 100;
+		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
+		private float softCritPercentage = 50;
+		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
+		private float critPercentage = 15;
+		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
+		private float deadPercentage = 0;
+		public float SoftCritThreshold => MaxHealth * (softCritPercentage / 100);
+		public float CritThreshold => MaxHealth * (critPercentage / 100);
+		public float DeadThreshold => MaxHealth * (deadPercentage / 100);
+		public float OverallHealth { get; protected set; }
+		public float OverallHealthPercentage => (OverallHealth / MaxHealth) * 100;
 
+		/// <summary>
+		/// Implementation from IHealth. Used to determine what happens on matrix collision (We think)
+		/// </summary>
 		public float Resistance { get; } = 50;
 
 		[Tooltip("For mobs that can breath in any atmos environment")]
 		public bool canBreathAnywhere = false;
 
-		public float OverallHealth { get; protected set; } = 100;
+
+		public float OxygenPassOut = 50; //TODO take this out of main class
 		public float cloningDamage;
 
 		/// <summary>
@@ -189,10 +205,10 @@ namespace Health
 			EnsureInit();
 			mobID = PlayerManager.Instance.GetMobID();
 			ResetBodyParts();
-			if (maxHealth <= 0)
+			if (MaxHealth <= 0)
 			{
-				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
-				maxHealth = 1;
+				Logger.LogWarning($"Max health ({MaxHealth}) set to zero/below zero!", Category.Health);
+				MaxHealth = 1;
 			}
 
 			//Generate BloodType and DNA
@@ -439,7 +455,7 @@ namespace Health
 				bodyPart.healthSystem = this;
 			}
 		}
-	
+
 		public void OnExposed(FireExposure exposure)
 		{
 			Profiler.BeginSample("PlayerExpose");
@@ -519,7 +535,7 @@ namespace Health
 		[Server]
 		protected virtual void CalculateOverallHealth()
 		{
-			float newHealth = 100;
+			float newHealth = MaxHealth;
 			newHealth -= CalculateOverallBodyPartDamage();
 			newHealth -= CalculateOverallBloodLossDamage();
 			newHealth -= bloodSystem.OxygenDamage;
@@ -561,7 +577,7 @@ namespace Health
 		/// Blood Loss and Toxin damage:
 		public int CalculateOverallBloodLossDamage()
 		{
-			float maxBloodDmg = Mathf.Abs(HealthThreshold.Dead) + maxHealth;
+			float maxBloodDmg = Mathf.Abs(DeadThreshold) + MaxHealth;
 			float bloodDmg = 0f;
 			if (bloodSystem.BloodLevel < (int)BloodVolume.SAFE)
 			{
@@ -626,16 +642,16 @@ namespace Health
 		/// </summary>
 		protected virtual void CheckHealthAndUpdateConsciousState()
 		{
-			if (ConsciousState != ConsciousState.CONSCIOUS && bloodSystem.OxygenDamage < HealthThreshold.OxygenPassOut && OverallHealth > HealthThreshold.SoftCrit)
+			if (ConsciousState != ConsciousState.CONSCIOUS && bloodSystem.OxygenDamage < OxygenPassOut && OverallHealth > SoftCritThreshold)
 			{
 				Logger.LogFormat( "{0}, back on your feet!", Category.Health, gameObject.name );
 				Uncrit();
 				return;
 			}
 
-			if (OverallHealth <= HealthThreshold.SoftCrit || bloodSystem.OxygenDamage > HealthThreshold.OxygenPassOut)
+			if (OverallHealth <= SoftCritThreshold || bloodSystem.OxygenDamage > OxygenPassOut)
 			{
-				if (OverallHealth <= HealthThreshold.Crit)
+				if (OverallHealth <= CritThreshold)
 				{
 					Crit(false);
 				}else{
@@ -651,7 +667,7 @@ namespace Health
 
 		private bool NotSuitableForDeath()
 		{
-			return OverallHealth > HealthThreshold.Dead || IsDead;
+			return OverallHealth > DeadThreshold || IsDead;
 		}
 
 		protected abstract void OnDeathActions();
@@ -769,16 +785,15 @@ namespace Health
 		/// </summary>
 		public string Examine(Vector3 worldPos)
 		{
-			var healthFraction = OverallHealth/maxHealth;
 			var healthString  = "";
 
 			if (!IsDead)
 			{
-				if (healthFraction < 0.2f)
+				if (OverallHealthPercentage < 20)
 				{
 					healthString = "heavily wounded.";
 				}
-				else if (healthFraction < 0.6f)
+				else if (OverallHealthPercentage < 60)
 				{
 					healthString = "wounded.";
 				}
@@ -816,7 +831,7 @@ namespace Health
 		public void OnSpawnServer(SpawnInfo info)
 		{
 			ConsciousState = ConsciousState.CONSCIOUS;
-			OverallHealth = maxHealth;
+			OverallHealth = MaxHealth;
 			ResetBodyParts();
 			CalculateOverallHealth();
 		}
@@ -844,13 +859,6 @@ namespace Health
 		}
 	}
 
-	public static class HealthThreshold
-	{
-		public const int SoftCrit = 0;
-		public const int Crit = -30;
-		public const int Dead = -100;
-		public const int OxygenPassOut = 50;
-	}
 	/// <summary>
 	/// Event which fires when conscious state changes, provides the old state and the new state
 	/// </summary>

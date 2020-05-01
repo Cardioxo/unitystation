@@ -90,7 +90,7 @@ namespace Health
 					temperature = 293.15f;
 				}
 
-				if(healthSystem.OverallHealth >= HealthThreshold.SoftCrit){
+				if(healthSystem.OverallHealth >= healthSystem.SoftCritThreshold){
 					if (Breathe(node))
 					{
 						AtmosManager.Update(node);
