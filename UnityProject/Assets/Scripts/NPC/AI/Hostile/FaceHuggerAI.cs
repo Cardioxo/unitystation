@@ -253,7 +253,7 @@ namespace NPC
 				return;
 			}
 
-			if (HealthSystem.OverallHealth < -20f)
+			if (HealthSystem.OverallHealthPercentage < 10f)
 			{
 				//30% chance the mob decides to flee:
 				if (Random.value < 0.3f)

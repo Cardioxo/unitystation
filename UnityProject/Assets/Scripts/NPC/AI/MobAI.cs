@@ -344,17 +344,17 @@ public class MobAI : MonoBehaviour, IServerDespawn
 	/// Common behavior to flee from attacker if health is less than X
 	/// Call this within OnAttackedReceive method
 	/// </summary>
-	/// <param name="healthThreshold">If health is less than this, RUN!</param>
+	/// <param name="healthPercentage">If health is less than this, RUN!</param>
 	/// <param name="attackedBy">Gameobject from the attacker. This can be null on fire!</param>
 	/// <param name="fleeDuration">Time in seconds the flee behavior will last. Defaults to forever</param>
-	protected void FleeIfHealthLessThan(float healthThreshold, GameObject attackedBy = null, float fleeDuration = -1f)
+	protected void FleeIfHealthLessThan(float healthPercentage, GameObject attackedBy = null, float fleeDuration = -1f)
 	{
 		if (attackedBy == null)
 		{
 			attackedBy = gameObject;
 		}
 
-		if (HealthSystem.OverallHealth < healthThreshold)
+		if (HealthSystem.OverallHealthPercentage < healthPercentage)
 		{
 			StartFleeing(attackedBy, fleeDuration);
 		}
