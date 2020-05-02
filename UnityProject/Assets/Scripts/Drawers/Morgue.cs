@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -103,7 +104,7 @@ public class Morgue : Drawer
 	private bool Conscious(ObjectBehaviour playerMob)
 	{
 		var playerMind = playerMob.GetComponent<PlayerScript>().mind;
-		var playerMobID = playerMob.GetComponent<LivingHealthBehaviour>().mobID;
+		var playerMobID = playerMob.GetComponent<HealthSystem>().mobID;
 
 		// If the mob IDs do not match, player is controlling a new mob, so we don't care about this old mob.
 		if (playerMind.bodyMobID == playerMobID && playerMind.IsOnline()) return true;
