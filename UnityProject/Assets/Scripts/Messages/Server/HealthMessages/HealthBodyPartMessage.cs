@@ -16,8 +16,10 @@ public class HealthBodyPartMessage : ServerMessage
 	public override void Process()
 	{
 		LoadNetworkObject(EntityToUpdate);
-		if (NetworkObject != null){
-			NetworkObject.GetComponent<HealthSystem>().UpdateClientBodyPartStats(BodyPart, BruteDamage, BurnDamage);
+		if (NetworkObject != null)
+		{
+			//TODO figure this out
+			// NetworkObject.GetComponent<HealthSystem>().UpdateClientBodyPartStats(BodyPart, BruteDamage, BurnDamage);
 		}
 	}
 

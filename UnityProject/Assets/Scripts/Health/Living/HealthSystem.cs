@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Atmospherics;
-using Health;
 using Light2D;
 using Mirror;
 using UnityEngine;
@@ -25,73 +24,62 @@ namespace Health
 		private static readonly float BURNING_HOTSPOT_VOLUME = .005f;
 		private static readonly float BURNING_HOTSPOT_TEMPERATURE = 700f;
 
-		/// <summary>
-		/// Invoked when conscious state changes. Provides old state and new state as 1st and 2nd args.
-		/// </summary>
-		[NonSerialized]
-		public ConsciousStateEvent OnConsciousStateChangeServer = new ConsciousStateEvent();
-
-		/// <summary>
-		/// Server side, each mob has a different one and never it never changes
-		/// </summary>
-		public int mobID { get; private set; }
-
+		#region Inspector
 		[Tooltip("Max amount of HP this creature has overall.")]
-		public float MaxHealth = 100;
+		public float maxHealth = 100;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float softCritPercentage = 50;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float critPercentage = 15;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float deadPercentage = 0;
-		public float SoftCritThreshold => MaxHealth * (softCritPercentage / 100);
-		public float CritThreshold => MaxHealth * (critPercentage / 100);
-		public float DeadThreshold => MaxHealth * (deadPercentage / 100);
-		public float OverallHealth { get; protected set; }
-		public float OverallHealthPercentage => (OverallHealth / MaxHealth) * 100;
-
-		/// <summary>
-		/// Implementation from IHealth. Used to determine what happens on matrix collision (We think)
-		/// </summary>
-		public float Resistance { get; } = 50;
 
 		[Tooltip("For mobs that can breath in any atmos environment")]
-		public bool canBreathAnywhere = false;
+		public bool canBreathAnywhere = false;//TODO take this out of main class, respiratory system instead
 
+		[Tooltip("At what oxy damage amount will this creature pass out")]
+		public float OxygenPassOut = 50; //TODO take this out of main class, use respiratory system instead
 
-		public float OxygenPassOut = 50; //TODO take this out of main class
-		public float cloningDamage;
+		[Tooltip("Damage to apply when cloning this creature")]
+		public float cloningDamage = 0;
 
-		/// <summary>
-		/// Serverside, used for gibbing bodies after certain amount of damage is received after death
-		/// </summary>
-		private float afterDeathDamage = 0f;
+		[Tooltip("What color is this creature's blood?")]
+		public BloodSplatType bloodColor; //TODO take this out of main class, use blood system intead
 
-		// Systems can also be added via inspector
+		[Tooltip("This creature's blood system")]
 		public BloodSystem bloodSystem;
-		public BrainSystem brainSystem;
-		public RespiratorySystem respiratorySystem;
 
-		public BloodSplatType bloodColor;
+		[Tooltip("This creature's brain system")]
+		public BrainSystem brainSystem;
+
+		[Tooltip("This creature's respiratory system")]
+		public RespiratorySystem respiratorySystem;
 
 		/// <summary>
 		/// If there are any body parts for this living thing, then add them to this list
 		/// via the inspector. There needs to be at least 1 chest bodypart for a living animal
 		/// </summary>
 		[Header("Fill BodyPart fields in via Inspector:")]
-		public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();
-
+		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")]
+		//public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();//TODO this is old implementation, commenting for now
+		public List<BodyPart> bodyParts = new List<BodyPart>();
 		//For meat harvest (pete etc)
-		public bool allowKnifeHarvest;
+		public bool allowKnifeHarvest; //TODO eliminate this, use harvesteable component instead
+		#endregion
 
-		protected DamageType LastDamageType;
-
-		protected GameObject LastDamagedBy;
-
-		public event Action<GameObject> applyDamageEvent;
-
-		public event Action OnDeathNotifyEvent;
-
+		#region Public getters/setters
+		/// <summary>
+		/// Server side, each mob has a different one and never it never changes
+		/// </summary>
+		public int mobID { get; private set; }
+		public float SoftCritThreshold => maxHealth * (softCritPercentage / 100);
+		public float CritThreshold => maxHealth * (critPercentage / 100);
+		public float DeadThreshold => maxHealth * (deadPercentage / 100);
+		public float OverallHealth { get; protected set; }
+		public float OverallHealthPercentage => (OverallHealth / maxHealth) * 100;
 		public ConsciousState ConsciousState
 		{
 			get => consciousState;
@@ -109,6 +97,63 @@ namespace Health
 			}
 		}
 
+		/// <summary>
+		/// Is the creature unconscious
+		/// </summary>
+		public bool IsCrit => ConsciousState == ConsciousState.UNCONSCIOUS;
+		/// <summary>
+		/// Is the creature barely conscious
+		/// </summary>
+		public bool IsSoftCrit => ConsciousState == ConsciousState.BARELY_CONSCIOUS;
+		/// <summary>
+		/// Is the creature dead
+		/// </summary>
+		public bool IsDead => ConsciousState == ConsciousState.DEAD;
+		/// <summary>
+		/// Has the heart stopped.
+		/// </summary>
+		public bool IsCardiacArrest => bloodSystem.HeartStopped;
+		/// <summary>
+		/// Implementation from IHealth. Used to determine what happens on matrix collision (We think)
+		/// </summary>
+		public float Resistance { get; } = 50;
+		/// <summary>
+		/// How on fire we are. Exists client side - synced with server.
+		/// </summary>
+		public float FireStacks => fireStacks;
+
+
+		#endregion
+
+		#region Events declaration
+		/// <summary>
+		/// Triggers when this creature have received damage
+		/// </summary>
+		public event Action<GameObject> ApplyDamageEvent;
+		/// <summary>
+		/// Triggers when this creature has died
+		/// </summary>
+		public event Action OnDeathNotifyEvent;
+		/// <summary>
+		/// Client side event which fires when this object's fire status changes
+		/// (becoming on fire, extinguishing, etc...). Use this to update
+		/// burning sprites.
+		/// </summary>
+		[NonSerialized] public FireStackEvent OnClientFireStacksChange = new FireStackEvent();
+		/// <summary>
+		/// Invoked when conscious state changes. Provides old state and new state as 1st and 2nd args.
+		/// </summary>
+		[NonSerialized] public ConsciousStateEvent OnConsciousStateChangeServer = new ConsciousStateEvent();
+		#endregion
+
+		#region private properties
+		/// <summary>
+		/// Serverside, used for gibbing bodies after certain amount of damage is received after death
+		/// </summary>
+		private float afterDeathDamage = 0f;
+		protected DamageType LastDamageType;
+		protected GameObject LastDamagedBy;
+
 		// JSON string for blood types and DNA.
 		[SyncVar(hook = nameof(DNASync))] //May remove this in the future and only provide DNA info on request
 		private string DNABloodTypeJSON;
@@ -116,21 +161,7 @@ namespace Health
 		//how on fire we are, sames as tg fire_stacks. 0 = not on fire.
 		//It's called "stacks" but it's really just a floating point value that
 		//can go up or down based on possible sources of being on fire. Max seems to be 20 in tg.
-		[SyncVar(hook=nameof(SyncFireStacks))]
-		private float fireStacks;
-
-		/// <summary>
-		/// How on fire we are. Exists client side - synced with server.
-		/// </summary>
-		public float FireStacks => fireStacks;
-
-		/// <summary>
-		/// Client side event which fires when this object's fire status changes
-		/// (becoming on fire, extinguishing, etc...). Use this to update
-		/// burning sprites.
-		/// </summary>
-		[NonSerialized]
-		public FireStackEvent OnClientFireStacksChange = new FireStackEvent();
+		[SyncVar(hook=nameof(SyncFireStacks))] private float fireStacks;
 
 		// BloodType and DNA Data.
 		private DNAandBloodType DNABloodType;
@@ -138,25 +169,13 @@ namespace Health
 		private float tick = 0;
 		private RegisterTile registerTile;
 		private ConsciousState consciousState;
+		#endregion
 
-		public bool IsCrit => ConsciousState == ConsciousState.UNCONSCIOUS;
-		public bool IsSoftCrit => ConsciousState == ConsciousState.BARELY_CONSCIOUS;
-
-		public bool IsDead => ConsciousState == ConsciousState.DEAD;
-
-		/// <summary>
-		/// Has the heart stopped.
-		/// </summary>
-		public bool IsCardiacArrest => bloodSystem.HeartStopped;
-
-
-		/// ---------------------------
-		/// INIT METHODS
-		/// ---------------------------
-
+		#region Init Methods
 		public virtual void Awake()
 		{
 			EnsureInit();
+
 		}
 
 		void OnEnable()
@@ -169,72 +188,51 @@ namespace Health
 			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
 		}
 
-		/// Add any missing systems:
 		private void EnsureInit()
 		{
-			if (registerTile != null) return;
+			if (registerTile != null)
+			{
+				return;
+			}
+
 			registerTile = GetComponent<RegisterTile>();
-			//Always include blood for living entities:
-			bloodSystem = GetComponent<BloodSystem>();
-			if (bloodSystem == null)
-			{
-				bloodSystem = gameObject.AddComponent<BloodSystem>();
-			}
-
-			//Always include respiratory for living entities:
-			respiratorySystem = GetComponent<RespiratorySystem>();
-			if (respiratorySystem == null)
-			{
-				respiratorySystem = gameObject.AddComponent<RespiratorySystem>();
-			}
-			respiratorySystem.canBreathAnywhere = canBreathAnywhere;
-
-			var tryGetHead = FindBodyPart(BodyPartType.Head);
-			if (tryGetHead != null && brainSystem == null)
-			{
-				if (tryGetHead.Type != BodyPartType.Chest)
-				{
-					//Head exists, install a brain system
-					brainSystem = gameObject.AddComponent<BrainSystem>();
-				}
-			}
+			SubscribeInternalEvents();
+			InitSubsystems();
 		}
 
-		public override void OnStartServer()
+		private void SubscribeInternalEvents()
 		{
-			EnsureInit();
-			mobID = PlayerManager.Instance.GetMobID();
-			ResetBodyParts();
-			if (MaxHealth <= 0)
+			OnDeathNotifyEvent += OnDeath;
+			ApplyDamageEvent += OnDamageReceived;
+
+			foreach (var bodyPart in bodyParts)
 			{
-				Logger.LogWarning($"Max health ({MaxHealth}) set to zero/below zero!", Category.Health);
-				MaxHealth = 1;
+				bodyPart.BleedingStateChanged += OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged += OnDismemberStateChanged;
+				bodyPart.MangledStateChanged += OnMangledStateChanged;
 			}
 
-			//Generate BloodType and DNA
-			DNABloodType = new DNAandBloodType();
-			DNABloodType.BloodColor = bloodColor;
-			DNABloodTypeJSON = JsonUtility.ToJson(DNABloodType);
-			bloodSystem.SetBloodType(DNABloodType);
+			//TODO subscribe to subsystems (respiratory, blood, brain) events
 		}
 
-		public override void OnStartClient()
+		private void UnsubscribeAll()
 		{
-			EnsureInit();
-			StartCoroutine(WaitForClientLoad());
-		}
+			ApplyDamageEvent -= OnDamageReceived;
 
-		IEnumerator WaitForClientLoad()
-		{
-			//wait for DNA:
-			while (string.IsNullOrEmpty(DNABloodTypeJSON))
+			foreach (var bodyPart in bodyParts)
 			{
-				yield return WaitFor.EndOfFrame;
+				bodyPart.BleedingStateChanged -= OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged -= OnDismemberStateChanged;
+				bodyPart.MangledStateChanged -= OnMangledStateChanged;
 			}
-			yield return WaitFor.EndOfFrame;
-			DNASync(DNABloodTypeJSON, DNABloodTypeJSON);
-			SyncFireStacks(fireStacks, this.fireStacks);
+
+			//TODO unsubscribe subsystems (respiratory, blood, brain) events
+
+
+			OnDeathNotifyEvent -= OnDeath;
 		}
+
+		#endregion
 
 		// This is the DNA SyncVar hook
 		private void DNASync(string oldDNA, string updatedDNA)
@@ -244,103 +242,30 @@ namespace Health
 			DNABloodType = JsonUtility.FromJson<DNAandBloodType>(updatedDNA);
 		}
 
-		public void Extinguish()
-		{
-			SyncFireStacks(fireStacks, 0);
-		}
-
-		public void ChangeFireStacks(float deltaValue)
-		{
-			SyncFireStacks(fireStacks, fireStacks + deltaValue);
-		}
-
-		private void SyncFireStacks(float oldValue, float newValue)
-		{
-			EnsureInit();
-			this.fireStacks = Math.Max(0,newValue);
-			OnClientFireStacksChange.Invoke(this.fireStacks);
-		}
-
-		/// ---------------------------
-		/// PUBLIC FUNCTIONS: HEAL AND DAMAGE:
-		/// ---------------------------
-
-		private BodyPartBehaviour GetBodyPart(float amount, DamageType damageType, BodyPartType bodyPartAim = BodyPartType.Chest){
-			if (amount <= 0 || IsDead)
-			{
-				return null;
-			}
-			if (bodyPartAim == BodyPartType.Groin)
-			{
-				bodyPartAim = BodyPartType.Chest;
-			}
-			if (bodyPartAim == BodyPartType.Eyes || bodyPartAim == BodyPartType.Mouth)
-			{
-				bodyPartAim = BodyPartType.Head;
-			}
-
-			if (BodyParts.Count == 0)
-			{
-				Logger.LogError($"There are no body parts to apply a health change to for {gameObject.name}", Category.Health);
-				return null;
-			}
-
-			//See if damage affects the state of the blood:
-			// See if any of the healing applied affects blood state
-			bloodSystem.AffectBloodState(bodyPartAim, damageType, amount);
-
-			if (damageType == DamageType.Brute || damageType == DamageType.Burn)
-			{
-				BodyPartBehaviour bodyPartBehaviour = null;
-
-				for (int i = 0; i < BodyParts.Count; i++)
-				{
-					if (BodyParts[i].Type == bodyPartAim)
-					{
-						bodyPartBehaviour = BodyParts[i];
-						break;
-					}
-				}
-
-				//If the body part does not exist then try to find the chest instead
-				if (bodyPartBehaviour == null)
-				{
-					var getChestIndex = BodyParts.FindIndex(x => x.Type == BodyPartType.Chest);
-					if (getChestIndex != -1)
-					{
-						bodyPartBehaviour = BodyParts[getChestIndex];
-					}
-					else
-					{
-						//If there is no default chest body part then do nothing
-						Logger.LogError($"No chest body part found for {gameObject.name}", Category.Health);
-						return null;
-					}
-				}
-				return bodyPartBehaviour;
-			}
-			return null;
-		}
-
+		#region Public functions
 		/// <summary>
 		///  Apply Damage to the whole body of this Living thing. Server only
 		/// </summary>
 		/// <param name="damagedBy">The player or object that caused the damage. Null if there is none</param>
-		/// <param name="damage">Damage Amount. will be distributed evenly across all bodyparts</param>
+		/// <param name="damage">Damage Amount. will be distributed evenly across all body parts</param>
 		/// <param name="attackType">type of attack that is causing the damage</param>
 		/// <param name="damageType">The Type of Damage</param>
 		[Server]
-		public void ApplyDamage( GameObject damagedBy, float damage,
-			AttackType attackType, DamageType damageType )
+		public void ApplyDamage( GameObject damagedBy, float damage, AttackType attackType, DamageType damageType )
 		{
-			foreach ( var bodyPart in BodyParts )
+			foreach ( var bodyPart in bodyParts )
 			{
-				ApplyDamageToBodypart( damagedBy, damage/BodyParts.Count, attackType, damageType, bodyPart.Type );
+				ApplyDamageToBodypart(
+					damagedBy,
+					damage/bodyParts.Count,
+					attackType,
+					damageType,
+					bodyPart.bodyPartData.bodyPartType );
 			}
 		}
 
 		/// <summary>
-		///  Apply Damage to random bodypart of the Living thing. Server only
+		///  Apply Damage to random body part of the Living thing. Server only
 		/// </summary>
 		/// <param name="damagedBy">The player or object that caused the damage. Null if there is none</param>
 		/// <param name="damage">Damage Amount</param>
@@ -362,32 +287,32 @@ namespace Health
 		/// <param name="damageType">The Type of Damage</param>
 		/// <param name="bodyPartAim">Body Part that is affected</param>
 		[Server]
-		public virtual void ApplyDamageToBodypart(GameObject damagedBy, float damage,
-			AttackType attackType, DamageType damageType, BodyPartType bodyPartAim)
+		public virtual void ApplyDamageToBodypart(
+			GameObject damagedBy, float damage, AttackType attackType, DamageType damageType, BodyPartType bodyPartAim)
 		{
-			if ( IsDead )
-			{
-				afterDeathDamage += damage;
-				if ( afterDeathDamage >= GIB_THRESHOLD )
-				{
-					Gib(); //TODO add fancy gibs
-				}
-			}
+			TryGib(damage);
 
-			BodyPartBehaviour bodyPartBehaviour = GetBodyPart(damage, damageType, bodyPartAim);
-			if(bodyPartBehaviour == null)
+			BodyPart bodyPart = GetBodyPart(damage, damageType, bodyPartAim);
+
+			if(bodyPart == null)
 			{
 				return;
 			}
 
 			var prevHealth = OverallHealth;
 
-			applyDamageEvent?.Invoke(damagedBy);
+			ApplyDamageEvent?.Invoke(damagedBy);
 
 			LastDamageType = damageType;
 			LastDamagedBy = damagedBy;
-			bodyPartBehaviour.ReceiveDamage(damageType, bodyPartBehaviour.armor.GetDamage(damage, attackType));
-			HealthBodyPartMessage.Send(gameObject, gameObject, bodyPartAim, bodyPartBehaviour.BruteDamage, bodyPartBehaviour.BurnDamage);
+			bodyPart.ReceiveDamage(damageType, bodyPart.bodyPartData.armor.GetDamage(damage, attackType));
+			HealthBodyPartMessage.Send(
+				gameObject,
+				gameObject,
+				bodyPartAim,
+				bodyPart.BruteDamage,
+				bodyPart.BurnDamage);
+
 
 			if (attackType == AttackType.Fire)
 			{
@@ -412,7 +337,7 @@ namespace Health
 		public virtual void HealDamage(GameObject healingItem, int healAmt,
 			DamageType damageTypeToHeal, BodyPartType bodyPartAim)
 		{
-			BodyPartBehaviour bodyPartBehaviour = GetBodyPart(healAmt, damageTypeToHeal, bodyPartAim);
+			BodyPart bodyPartBehaviour = GetBodyPart(healAmt, damageTypeToHeal, bodyPartAim);
 			if (bodyPartBehaviour == null)
 			{
 				return;
@@ -425,19 +350,146 @@ namespace Health
 				healAmt, prevHealth, OverallHealth, gameObject.name, damageTypeToHeal, bodyPartAim, healingItem);
 		}
 
-
-		public BodyPartBehaviour FindBodyPart(BodyPartType bodyPartAim)
+		public virtual void InitSubsystems()
 		{
-			int searchIndex = BodyParts.FindIndex(x => x.Type == bodyPartAim);
+			//TODO get subsystems from inner organs instead.
+			// use this method to initialize at spawn and to reinitialize when an inner organ has changed
+
+			//TODO this is old implementation, replace with reading from inner organs instead
+			//Always include blood for living entities:
+			bloodSystem = GetComponent<BloodSystem>();
+			if (bloodSystem == null)
+			{
+				bloodSystem = gameObject.AddComponent<BloodSystem>();
+			}
+
+			//Always include respiratory for living entities:
+			respiratorySystem = GetComponent<RespiratorySystem>();
+			if (respiratorySystem == null)
+			{
+				respiratorySystem = gameObject.AddComponent<RespiratorySystem>();
+			}
+
+			respiratorySystem.canBreathAnywhere = canBreathAnywhere;
+
+			var tryGetHead = FindBodyPart(BodyPartType.Head);
+			if (tryGetHead != null && brainSystem == null)
+			{
+				if (tryGetHead.bodyPartData.bodyPartType != BodyPartType.Chest)
+				{
+					//Head exists, install a brain system
+					brainSystem = gameObject.AddComponent<BrainSystem>();
+				}
+			}
+
+			//Generate BloodType and DNA
+			DNABloodType = new DNAandBloodType();
+			DNABloodType.BloodColor = bloodColor;
+			DNABloodTypeJSON = JsonUtility.ToJson(DNABloodType);
+			bloodSystem.SetBloodType(DNABloodType);
+		}
+
+		public void Extinguish()
+		{
+			SyncFireStacks(fireStacks, 0);
+		}
+
+		public void ChangeFireStacks(float deltaValue)
+		{
+			SyncFireStacks(fireStacks, fireStacks + deltaValue);
+		}
+
+		#endregion
+
+		private void SyncFireStacks(float oldValue, float newValue)
+		{
+			EnsureInit();
+			this.fireStacks = Math.Max(0,newValue);
+			OnClientFireStacksChange.Invoke(this.fireStacks);
+		}
+
+		private BodyPart GetBodyPart(float amount, DamageType damageType, BodyPartType bodyPartAim = BodyPartType.Chest)
+		{
+			if (amount <= 0 || IsDead)
+			{
+				return null;
+			}
+
+			//convert micro body part to macro
+			//TODO make eyes damage eyes inner organ
+			switch (bodyPartAim)
+			{
+				case BodyPartType.Groin:
+					bodyPartAim = BodyPartType.Chest;
+					break;
+				case BodyPartType.Eyes:
+					bodyPartAim = BodyPartType.Head;
+					break;
+				case BodyPartType.Mouth:
+					bodyPartAim = BodyPartType.Head;
+					break;
+			}
+
+			if (bodyParts.Count == 0)
+			{
+				Logger.LogError($"There are no body parts to apply a health change to for {gameObject.name}", Category.Health);
+				return null;
+			}
+
+			//See if damage affects the state of the blood:
+			// See if any of the healing applied affects blood state
+			bloodSystem.AffectBloodState(bodyPartAim, damageType, amount);
+
+			if (damageType != DamageType.Brute && damageType != DamageType.Burn)
+			{
+				return null;
+			}
+
+			BodyPart bodyPart = null;
+
+			foreach (var bp in bodyParts)
+			{
+				if (bp.bodyPartData.bodyPartType != bodyPartAim)
+				{
+					continue;
+				}
+
+				bodyPart = bp;
+				break;
+			}
+
+			//If the body part does not exist then try to find the chest instead
+			if (bodyPart != null)
+			{
+				return bodyPart;
+			}
+
+			var getChestIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
+			if (getChestIndex != -1)
+			{
+				bodyPart = bodyParts[getChestIndex];
+			}
+			else
+			{
+				//If there is no default chest body part then do nothing
+				Logger.LogError($"No chest body part found for {gameObject.name}", Category.Health);
+				return null;
+			}
+			return bodyPart;
+		}
+
+		public BodyPart FindBodyPart(BodyPartType bodyPartAim)
+		{
+			int searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == bodyPartAim);
 			if (searchIndex != -1)
 			{
-				return BodyParts[searchIndex];
+				return bodyParts[searchIndex];
 			}
 			//If nothing is found then try to find a chest component:
-			searchIndex = BodyParts.FindIndex(x => x.Type == BodyPartType.Chest);
+			searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
 			if (searchIndex != -1)
 			{
-				return BodyParts[searchIndex];
+				return bodyParts[searchIndex];
 			}
 			// else nothing:
 			return null;
@@ -449,23 +501,14 @@ namespace Health
 		[Server]
 		private void ResetBodyParts()
 		{
-			foreach (BodyPartBehaviour bodyPart in BodyParts)
+			foreach (BodyPart bodyPart in bodyParts)
 			{
 				bodyPart.RestoreDamage();
-				bodyPart.healthSystem = this;
 			}
 		}
 
-		public void OnExposed(FireExposure exposure)
-		{
-			Profiler.BeginSample("PlayerExpose");
-			ApplyDamage(null, 1, AttackType.Fire, DamageType.Burn);
-			Profiler.EndSample();
-		}
-
-		/// ---------------------------
-		/// UPDATE LOOP
-		/// ---------------------------
+		#region Update loop
+		//TODO take everything you can't outside the update loop
 
 		//Handled via UpdateManager
 		protected virtual void UpdateMe()
@@ -481,7 +524,7 @@ namespace Health
 					{
 						HandleFireDamage();
 					}
-
+					//TODO stop calculation every tick, calculate only when health changed
 					CalculateOverallHealth();
 					CheckHealthAndUpdateConsciousState();
 				}
@@ -504,12 +547,9 @@ namespace Health
 			registerTile.Matrix.ReactionManager.ExposeHotspotWorldPosition(gameObject.TileWorldPosition(),
 				BURNING_HOTSPOT_TEMPERATURE, BURNING_HOTSPOT_VOLUME);
 		}
+		#endregion
 
-
-		/// ---------------------------
-		/// VISUAL EFFECTS
-		/// ---------------------------
-
+		#region Visual effects
 		/// <Summary>
 		/// Used to determine any special effects spawning cased by a damage type
 		/// Server only
@@ -524,18 +564,16 @@ namespace Health
 				EffectsFactory.BloodSplat(registerTile.WorldPositionServer, BloodSplatSize.medium, bloodColor);
 			}
 		}
+		#endregion
 
-		/// ---------------------------
-		/// HEALTH CALCULATIONS
-		/// ---------------------------
-
+		#region Health calculation
 		/// <summary>
 		/// Recalculates the overall player health and updates OverallHealth property. Server only
 		/// </summary>
 		[Server]
 		protected virtual void CalculateOverallHealth()
 		{
-			float newHealth = MaxHealth;
+			float newHealth = maxHealth;
 			newHealth -= CalculateOverallBodyPartDamage();
 			newHealth -= CalculateOverallBloodLossDamage();
 			newHealth -= bloodSystem.OxygenDamage;
@@ -546,10 +584,10 @@ namespace Health
 		public float CalculateOverallBodyPartDamage()
 		{
 			float bodyPartDmg = 0;
-			for (int i = 0; i < BodyParts.Count; i++)
+			for (int i = 0; i < bodyParts.Count; i++)
 			{
-				bodyPartDmg += BodyParts[i].BruteDamage;
-				bodyPartDmg += BodyParts[i].BurnDamage;
+				bodyPartDmg += bodyParts[i].BruteDamage;
+				bodyPartDmg += bodyParts[i].BurnDamage;
 			}
 			return bodyPartDmg;
 		}
@@ -557,9 +595,9 @@ namespace Health
 		public float GetTotalBruteDamage()
 		{
 			float bruteDmg = 0;
-			for (int i = 0; i < BodyParts.Count; i++)
+			for (int i = 0; i < bodyParts.Count; i++)
 			{
-				bruteDmg += BodyParts[i].BruteDamage;
+				bruteDmg += bodyParts[i].BruteDamage;
 			}
 			return bruteDmg;
 		}
@@ -567,9 +605,9 @@ namespace Health
 		public float GetTotalBurnDamage()
 		{
 			float burnDmg = 0;
-			for (int i = 0; i < BodyParts.Count; i++)
+			for (int i = 0; i < bodyParts.Count; i++)
 			{
-				burnDmg += BodyParts[i].BurnDamage;
+				burnDmg += bodyParts[i].BurnDamage;
 			}
 			return burnDmg;
 		}
@@ -577,7 +615,7 @@ namespace Health
 		/// Blood Loss and Toxin damage:
 		public int CalculateOverallBloodLossDamage()
 		{
-			float maxBloodDmg = Mathf.Abs(DeadThreshold) + MaxHealth;
+			float maxBloodDmg = Mathf.Abs(DeadThreshold) + maxHealth;
 			float bloodDmg = 0f;
 			if (bloodSystem.BloodLevel < (int)BloodVolume.SAFE)
 			{
@@ -593,10 +631,9 @@ namespace Health
 			return Mathf.RoundToInt(Mathf.Clamp(bloodDmg, 0f, maxBloodDmg));
 		}
 
-		/// ---------------------------
-		/// CRIT + DEATH METHODS
-		/// ---------------------------
+		#endregion
 
+		#region Crit + death methods
 		///Death from other causes
 		public virtual void Death()
 		{
@@ -676,10 +713,9 @@ namespace Health
 		{
 			OnDeathNotifyEvent?.Invoke();
 		}
-		// --------------------
-		// UPDATES FROM SERVER
-		// --------------------
+		#endregion
 
+		#region Update client methods
 		// Stats are separated so that the server only updates the area of concern when needed
 
 		/// <summary>
@@ -736,6 +772,7 @@ namespace Health
 			}
 		}
 
+		//TODO figure this shit out
 		/// <summary>
 		/// Updates the bodypart health stats from the server via NetMsg
 		/// </summary>
@@ -746,14 +783,91 @@ namespace Health
 			{
 				//	Logger.Log($"Update stats for {gameObject.name} body part {bodyPartType.ToString()} BruteDmg: {bruteDamage} BurnDamage: {burnDamage}", Category.Health);
 
-				bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
+				// bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
+			}
+		}
+		#endregion
+
+		#region Event methods
+
+		public override void OnStartServer()
+		{
+			EnsureInit();
+			mobID = PlayerManager.Instance.GetMobID();
+			ResetBodyParts();
+			if (maxHealth <= 0)
+			{
+				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
+				maxHealth = 1;
 			}
 		}
 
-		/// ---------------------------
-		/// MISC Functions:
-		/// ---------------------------
+		public override void OnStartClient()
+		{
+			EnsureInit();
+			StartCoroutine(WaitForClientLoad());
+		}
 
+		IEnumerator WaitForClientLoad()
+		{
+			//wait for DNA:
+			while (string.IsNullOrEmpty(DNABloodTypeJSON))
+			{
+				yield return WaitFor.EndOfFrame;
+			}
+			yield return WaitFor.EndOfFrame;
+			DNASync(DNABloodTypeJSON, DNABloodTypeJSON);
+			SyncFireStacks(fireStacks, this.fireStacks);
+		}
+
+		public void OnExposed(FireExposure exposure)
+		{
+			Profiler.BeginSample("PlayerExpose");
+			ApplyDamage(null, 1, AttackType.Fire, DamageType.Burn);
+			Profiler.EndSample();
+		}
+
+		public void OnSpawnServer(SpawnInfo info)
+		{
+			ConsciousState = ConsciousState.CONSCIOUS;
+			OverallHealth = maxHealth;
+			ResetBodyParts();
+			CalculateOverallHealth();
+		}
+
+		protected virtual void OnDeath()
+		{
+			UnsubscribeAll();
+			//TODO Start husk/decomposition coroutine
+		}
+
+		protected virtual void OnDamageReceived(GameObject damagedBy)
+		{
+			//TODO do health calculations here.
+			//TODO update clients UI from here.
+			//TODO determine if lives or die from here
+
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnBleedingStateChanged(BodyPart bodyPart, bool isBleeding)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isMangled)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnMangledStateChanged(BodyPart bodyPart, bool isMangled)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
+
+		#region Misc functions
 		[Server]
 		public virtual void Gib()
 		{
@@ -762,6 +876,20 @@ namespace Health
 
 			//never destroy players!
 			Despawn.ServerSingle(gameObject);
+		}
+
+		private void TryGib(float damage)
+		{
+			if (!IsDead)
+			{
+				return;
+			}
+
+			afterDeathDamage += damage;
+			if (afterDeathDamage >= GIB_THRESHOLD)
+			{
+				Gib(); //TODO add fancy gibs
+			}
 		}
 
 		private void OnDrawGizmos()
@@ -774,6 +902,7 @@ namespace Health
 			Gizmos.DrawCube( registerTile.WorldPositionServer, Vector3.one );
 		}
 
+		//TODO finish this implementation. Move all of this to an interface
 		/// <summary>
 		/// This is just a simple initial implementation of IExaminable to health;
 		/// can potentially be extended to return more details and let the server
@@ -827,20 +956,15 @@ namespace Health
 			healthString = pronoun + " is " + healthString + (respiratorySystem.IsSuffocating && !IsDead ? " " + pronoun + " is having trouble breathing!" : "");
 			return healthString;
 		}
-
-		public void OnSpawnServer(SpawnInfo info)
-		{
-			ConsciousState = ConsciousState.CONSCIOUS;
-			OverallHealth = MaxHealth;
-			ResetBodyParts();
-			CalculateOverallHealth();
-		}
+		#endregion
 	}
 
 	/// <summary>
 	/// Event which fires when fire stack value changes.
 	/// </summary>
-	public class FireStackEvent : UnityEvent<float> {}
+	public class FireStackEvent : UnityEvent<float>
+	{
+	}
 
 	/// <summary>
 	/// Communicates fire status changes.

@@ -303,12 +303,12 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 			yield return WaitFor.Seconds(.1f);
 		}
 
-		for (int i = 0; i < healthSystem.BodyParts.Count; i++)
+		for (int i = 0; i < healthSystem.bodyParts.Count; i++)
 		{
 			HealthBodyPartMessage.Send(requestor, gameObject,
-				healthSystem.BodyParts[i].Type,
-				healthSystem.BodyParts[i].BruteDamage,
-				healthSystem.BodyParts[i].BurnDamage);
+				healthSystem.bodyParts[i].bodyPartData.bodyPartType,
+				healthSystem.bodyParts[i].BruteDamage,
+				healthSystem.bodyParts[i].BurnDamage);
 			yield return WaitFor.Seconds(.1f);
 		}
 	}

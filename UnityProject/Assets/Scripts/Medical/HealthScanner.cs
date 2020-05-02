@@ -27,9 +27,9 @@ public class HealthScanner : MonoBehaviour, ICheckedInteractable<HandApply>
 		string StringBuffer = "";
 		float TotalBruteDamage = 0;
 		float TotalBurnDamage = 0;
-		foreach (BodyPartBehaviour BodyPart in livingHealth.BodyParts)
+		foreach (BodyPart BodyPart in livingHealth.bodyParts)
 		{
-			StringBuffer += BodyPart.Type.ToString() + "\t";
+			StringBuffer += BodyPart.bodyPartData.bodyPartType.ToString() + "\t";
 			StringBuffer += BodyPart.BruteDamage.ToString() + "\t";
 			TotalBruteDamage += BodyPart.BruteDamage;
 			StringBuffer += BodyPart.BurnDamage.ToString();
