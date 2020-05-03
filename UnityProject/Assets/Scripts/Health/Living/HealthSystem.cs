@@ -584,7 +584,7 @@ namespace Health
 				bloodDmg = Mathf.Lerp(0f, maxBloodDmg, 1f - (bloodSystem.BloodLevel / (float)BloodVolume.NORMAL));
 			}
 
-			if (bloodSystem.ToxinLevel > 1f)
+			if (bloodSystem.ToxinDamage > 1f)
 			{
 				//TODO determine a way to handle toxin damage when toxins are implemented
 				//There will need to be some kind of blood / toxin ratio and severity limits determined
@@ -720,9 +720,9 @@ namespace Health
 		/// <summary>
 		/// Updates the blood health stats from the server via NetMsg
 		/// </summary>
-		public void UpdateClientBloodStats(int heartRate, float bloodVolume, float oxygenDamage, float toxinLevel)
+		public void UpdateClientBloodStats(int heartRate, float bloodVolume, float oxygenDamage, float toxinDamage)
 		{
-			bloodSystem.UpdateClientBloodStats(heartRate, bloodVolume, oxygenDamage, toxinLevel);
+			bloodSystem.UpdateClientBloodStats(heartRate, bloodVolume, oxygenDamage, toxinDamage);
 		}
 
 		/// <summary>

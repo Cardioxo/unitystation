@@ -9,14 +9,22 @@ namespace Health
 	/// </summary>
 	public class BloodSystem : MonoBehaviour
 	{
+		public float MaxToxinDamage = 200;
+		
+		private float toxinDamage = 0;
+		
+		/// <summary>
+		/// How much toxin is found in the blood.
+		/// </summary>
+		public float ToxinDamage
+		{
+			get { return Mathf.Clamp(toxinDamage, 0, MaxToxinDamage); }
+			set { toxinDamage = Mathf.Clamp(value, 0, MaxToxinDamage); }
+		}
+		
 		/// <summary>
 		/// How much toxin is found in the blood. 0% to 100%
 		/// </summary>
-		public float ToxinLevel
-		{
-			get { return Mathf.Clamp(toxinLevel, 0, 101); }
-			set { toxinLevel = Mathf.Clamp(value, 0, 101); }
-		}
 
 		/// <summary>
 		/// The lack of oxygen levels found in the blood.
@@ -39,7 +47,6 @@ namespace Health
 		public bool HeartStopped => HeartRate == 0;
 
 		public float oxygenDamage = 0;
-		private float toxinLevel = 0;
 		private HealthSystem healthSystem;
 		private DNAandBloodType bloodType;
 		public float BloodLevel = (int)BloodVolume.NORMAL;
@@ -247,7 +254,7 @@ namespace Health
 
 			if (damageType == DamageType.Tox)
 			{
-				ToxinLevel += amount;
+				ToxinDamage += amount;
 			}
 		}
 
@@ -262,7 +269,7 @@ namespace Health
 		// UPDATES FROM SERVER
 		// --------------------
 
-		public void UpdateClientBloodStats(int heartRate, float bloodVolume, float _oxygenDamage, float _toxinLevel)
+		public void UpdateClientBloodStats(int heartRate, float bloodVolume, float _oxygenDamage, float _toxinDamage)
 		{
 			if (CustomNetworkManager.Instance._isServer)
 			{
@@ -272,7 +279,7 @@ namespace Health
 			HeartRate = heartRate;
 			BloodLevel = bloodVolume;
 			OxygenDamage = _oxygenDamage;
-			toxinLevel = _toxinLevel;
+			toxinDamage = _toxinDamage;
 		}
 	}
 }

@@ -12,12 +12,12 @@ public class HealthBloodMessage : ServerMessage
 	public int HeartRate;
 	public float BloodLevel;
 	public float OxygenDamage;
-	public float ToxinLevel;
+	public float ToxinDamage;
 
 	public override void Process()
 	{
 		LoadNetworkObject(EntityToUpdate);
-		NetworkObject.GetComponent<HealthSystem>().UpdateClientBloodStats(HeartRate, BloodLevel, OxygenDamage, ToxinLevel);
+		NetworkObject.GetComponent<HealthSystem>().UpdateClientBloodStats(HeartRate, BloodLevel, OxygenDamage, ToxinDamage);
 	}
 
 	public static HealthBloodMessage Send(GameObject recipient, GameObject entityToUpdate, int heartRate, float bloodLevel,
@@ -29,7 +29,7 @@ public class HealthBloodMessage : ServerMessage
 				HeartRate = heartRate,
 				BloodLevel = bloodLevel,
 				OxygenDamage = oxygenDamage,
-				ToxinLevel = toxinLevel
+				ToxinDamage = toxinLevel
 		};
 		msg.SendTo(recipient);
 		return msg;
@@ -44,7 +44,7 @@ public class HealthBloodMessage : ServerMessage
 				HeartRate = heartRate,
 				BloodLevel = bloodLevel,
 				OxygenDamage = oxygenDamage,
-				ToxinLevel = toxinLevel
+				ToxinDamage = toxinLevel
 		};
 		msg.SendToAll();
 		return msg;

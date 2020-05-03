@@ -152,7 +152,7 @@ public class MetabolismSystem : NetworkBehaviour
 					}
 
 					nutritionLevel += e.totalNutrients / e.initialDuration;
-					bloodSystem.ToxinLevel += e.totalToxins / e.initialDuration;
+					bloodSystem.ToxinDamage += e.totalToxins / e.initialDuration;
 					e.duration--;
 					effects[i] = e;
 				}

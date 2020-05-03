@@ -19,7 +19,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	int heartRateCache;
 	float bloodLevelCache;
 	float oxygenDamageCache;
-	float toxinLevelCache;
+	float toxinDamageCache;
 	bool isHuskCache;
 	int brainDamageCache;
 
@@ -63,7 +63,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 		heartRateCache = healthSystem.bloodSystem.HeartRate;
 		bloodLevelCache = healthSystem.bloodSystem.BloodLevel;
 		oxygenDamageCache = healthSystem.bloodSystem.OxygenDamage;
-		toxinLevelCache = healthSystem.bloodSystem.ToxinLevel;
+		toxinDamageCache = healthSystem.bloodSystem.ToxinDamage;
 	}
 
 	/// ---------------------------
@@ -154,7 +154,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 
 	void CheckCruicialBloodHealth()
 	{
-		if (toxinLevelCache != healthSystem.bloodSystem.ToxinLevel ||
+		if (toxinDamageCache != healthSystem.bloodSystem.ToxinDamage ||
 			heartRateCache != healthSystem.bloodSystem.HeartRate)
 		{
 			UpdateBloodCaches();
@@ -200,7 +200,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	void SendBloodUpdate()
 	{
 		HealthBloodMessage.Send(gameObject, gameObject, heartRateCache, bloodLevelCache,
-			oxygenDamageCache, toxinLevelCache);
+			oxygenDamageCache, toxinDamageCache);
 	}
 
 	void SendBrainUpdate()
@@ -229,7 +229,7 @@ public class HealthStateMonitor : ManagedNetworkBehaviour
 	void SendBloodUpdate(GameObject requestor)
 	{
 		HealthBloodMessage.Send(requestor, gameObject, heartRateCache, bloodLevelCache,
-			oxygenDamageCache, toxinLevelCache);
+			oxygenDamageCache, toxinDamageCache);
 	}
 
 	void SendRespiratoryUpdate()
