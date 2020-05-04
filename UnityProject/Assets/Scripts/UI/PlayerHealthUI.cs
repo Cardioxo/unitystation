@@ -192,4 +192,51 @@ public class PlayerHealthUI : MonoBehaviour
 			}
 		}
 	}
+
+	/// <summary>
+	/// Overload of previous method so we can keep retro compatibility until we finish refactoring
+	/// </summary>
+	/// <param name="bodyPart"></param>
+	public void SetBodyTypeOverlay(BodyPart bodyPart)
+	{
+		foreach (var damageListener in bodyPartListeners)
+		{
+			if (damageListener.bodyPartType != bodyPart.bodyPartData.bodyPartType)
+			{
+				continue;
+			}
+
+			Sprite sprite;
+			switch (bodyPart.DamageSeverity)
+			{
+				case DamageSeverity.None:
+					sprite = bodyPart.bodyPartData.blueDamageMonitorIcon;
+					break;
+				case DamageSeverity.Light:
+					sprite = bodyPart.bodyPartData.greenDamageMonitorIcon;
+					break;
+				case DamageSeverity.LightModerate:
+					sprite = bodyPart.bodyPartData.yellowDamageMonitorIcon;
+					break;
+				case DamageSeverity.Moderate:
+					sprite = bodyPart.bodyPartData.orangeDamageMonitorIcon;
+					break;
+				case DamageSeverity.Bad:
+					sprite = bodyPart.bodyPartData.darkOrangeDamageMonitorIcon;
+					break;
+				case DamageSeverity.Critical:
+					sprite = bodyPart.bodyPartData.redDamageMonitorIcon;
+					break;
+				case DamageSeverity.Max:
+				default:
+					sprite = bodyPart.bodyPartData.grayDamageMonitorIcon;
+					break;
+			}
+
+			if (sprite != null && damageListener != null && damageListener.image != null)
+			{
+				damageListener.image.sprite = sprite;
+			}
+		}
+	}
 }
