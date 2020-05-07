@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Atmospherics;
-using Health;
 using Light2D;
 using Mirror;
 using UnityEngine;
@@ -25,73 +24,62 @@ namespace Health
 		private static readonly float BURNING_HOTSPOT_VOLUME = .005f;
 		private static readonly float BURNING_HOTSPOT_TEMPERATURE = 700f;
 
-		/// <summary>
-		/// Invoked when conscious state changes. Provides old state and new state as 1st and 2nd args.
-		/// </summary>
-		[NonSerialized]
-		public ConsciousStateEvent OnConsciousStateChangeServer = new ConsciousStateEvent();
-
-		/// <summary>
-		/// Server side, each mob has a different one and never it never changes
-		/// </summary>
-		public int mobID { get; private set; }
-
+		#region Inspector
 		[Tooltip("Max amount of HP this creature has overall.")]
-		public float MaxHealth = 100;
+		public float maxHealth = 100;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float softCritPercentage = 50;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float critPercentage = 15;
+
 		[SerializeField][Tooltip("Percentage of this creature's max hp to get into this state")]
 		private float deadPercentage = 0;
-		public float SoftCritThreshold => MaxHealth * (softCritPercentage / 100);
-		public float CritThreshold => MaxHealth * (critPercentage / 100);
-		public float DeadThreshold => MaxHealth * (deadPercentage / 100);
-		public float OverallHealth { get; protected set; }
-		public float OverallHealthPercentage => (OverallHealth / MaxHealth) * 100;
-
-		/// <summary>
-		/// Implementation from IHealth. Used to determine what happens on matrix collision (We think)
-		/// </summary>
-		public float Resistance { get; } = 50;
 
 		[Tooltip("For mobs that can breath in any atmos environment")]
-		public bool canBreathAnywhere = false;
+		public bool canBreathAnywhere = false;//TODO take this out of main class, respiratory system instead
 
+		[Tooltip("At what oxy damage amount will this creature pass out")]
+		public float OxygenPassOut = 50; //TODO take this out of main class, use respiratory system instead
 
-		public float OxygenPassOut = 50; //TODO take this out of main class
-		public float cloningDamage;
+		[Tooltip("Damage to apply when cloning this creature")]
+		public float cloningDamage = 0;
 
-		/// <summary>
-		/// Serverside, used for gibbing bodies after certain amount of damage is received after death
-		/// </summary>
-		private float afterDeathDamage = 0f;
+		[Tooltip("What color is this creature's blood?")]
+		public BloodSplatType bloodColor; //TODO take this out of main class, use blood system intead
 
-		// Systems can also be added via inspector
+		[Tooltip("This creature's blood system")]
 		public BloodSystem bloodSystem;
-		public BrainSystem brainSystem;
-		public RespiratorySystem respiratorySystem;
 
-		public BloodSplatType bloodColor;
+		[Tooltip("This creature's brain system")]
+		public BrainSystem brainSystem;
+
+		[Tooltip("This creature's respiratory system")]
+		public RespiratorySystem respiratorySystem;
 
 		/// <summary>
 		/// If there are any body parts for this living thing, then add them to this list
 		/// via the inspector. There needs to be at least 1 chest bodypart for a living animal
 		/// </summary>
 		[Header("Fill BodyPart fields in via Inspector:")]
-		public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();
-
+		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")]
+		//public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();//TODO this is old implementation, commenting for now
+		public List<BodyPart> BodyParts = new List<BodyPart>();
 		//For meat harvest (pete etc)
-		public bool allowKnifeHarvest;
+		public bool allowKnifeHarvest; //TODO eliminate this, use harvesteable component instead
+		#endregion
 
-		protected DamageType LastDamageType;
-
-		protected GameObject LastDamagedBy;
-
-		public event Action<GameObject> applyDamageEvent;
-
-		public event Action OnDeathNotifyEvent;
-
+		#region Public getters/setters
+		/// <summary>
+		/// Server side, each mob has a different one and never it never changes
+		/// </summary>
+		public int mobID { get; private set; }
+		public float SoftCritThreshold => maxHealth * (softCritPercentage / 100);
+		public float CritThreshold => maxHealth * (critPercentage / 100);
+		public float DeadThreshold => maxHealth * (deadPercentage / 100);
+		public float OverallHealth { get; protected set; }
+		public float OverallHealthPercentage => (OverallHealth / maxHealth) * 100;
 		public ConsciousState ConsciousState
 		{
 			get => consciousState;
@@ -109,6 +97,65 @@ namespace Health
 			}
 		}
 
+		/// <summary>
+		/// Is the creature unconscious
+		/// </summary>
+		public bool IsCrit => ConsciousState == ConsciousState.UNCONSCIOUS;
+		/// <summary>
+		/// Is the creature barely conscious
+		/// </summary>
+		public bool IsSoftCrit => ConsciousState == ConsciousState.BARELY_CONSCIOUS;
+		/// <summary>
+		/// Is the creature dead
+		/// </summary>
+		public bool IsDead => ConsciousState == ConsciousState.DEAD;
+		/// <summary>
+		/// Has the heart stopped.
+		/// </summary>
+		public bool IsCardiacArrest => bloodSystem.HeartStopped;
+		/// <summary>
+		/// Implementation from IHealth. Used to determine what happens on matrix collision (We think)
+		/// </summary>
+		public float Resistance { get; } = 50;
+		/// <summary>
+		/// How on fire we are. Exists client side - synced with server.
+		/// </summary>
+		public float FireStacks => fireStacks;
+
+
+		#endregion
+
+		#region Events
+		/// <summary>
+		/// Triggers when this creature have received damage
+		/// </summary>
+		public event Action<GameObject> ApplyDamageEvent;
+		/// <summary>
+		/// Triggers when this creature has died
+		/// </summary>
+		public event Action OnDeathNotifyEvent;
+		/// <summary>
+		/// Client side event which fires when this object's fire status changes
+		/// (becoming on fire, extinguishing, etc...). Use this to update
+		/// burning sprites.
+		/// </summary>
+		[NonSerialized]
+		public FireStackEvent OnClientFireStacksChange = new FireStackEvent();
+		/// <summary>
+		/// Invoked when conscious state changes. Provides old state and new state as 1st and 2nd args.
+		/// </summary>
+		[NonSerialized]
+		public ConsciousStateEvent OnConsciousStateChangeServer = new ConsciousStateEvent();
+		#endregion
+
+
+		/// <summary>
+		/// Serverside, used for gibbing bodies after certain amount of damage is received after death
+		/// </summary>
+		private float afterDeathDamage = 0f;
+		protected DamageType LastDamageType;
+		protected GameObject LastDamagedBy;
+
 		// JSON string for blood types and DNA.
 		[SyncVar(hook = nameof(DNASync))] //May remove this in the future and only provide DNA info on request
 		private string DNABloodTypeJSON;
@@ -119,19 +166,6 @@ namespace Health
 		[SyncVar(hook=nameof(SyncFireStacks))]
 		private float fireStacks;
 
-		/// <summary>
-		/// How on fire we are. Exists client side - synced with server.
-		/// </summary>
-		public float FireStacks => fireStacks;
-
-		/// <summary>
-		/// Client side event which fires when this object's fire status changes
-		/// (becoming on fire, extinguishing, etc...). Use this to update
-		/// burning sprites.
-		/// </summary>
-		[NonSerialized]
-		public FireStackEvent OnClientFireStacksChange = new FireStackEvent();
-
 		// BloodType and DNA Data.
 		private DNAandBloodType DNABloodType;
 		private float tickRate = 1f;
@@ -139,21 +173,11 @@ namespace Health
 		private RegisterTile registerTile;
 		private ConsciousState consciousState;
 
-		public bool IsCrit => ConsciousState == ConsciousState.UNCONSCIOUS;
-		public bool IsSoftCrit => ConsciousState == ConsciousState.BARELY_CONSCIOUS;
-
-		public bool IsDead => ConsciousState == ConsciousState.DEAD;
-
-		/// <summary>
-		/// Has the heart stopped.
-		/// </summary>
-		public bool IsCardiacArrest => bloodSystem.HeartStopped;
-
-
 		/// ---------------------------
 		/// INIT METHODS
 		/// ---------------------------
 
+		#region Init Methods
 		public virtual void Awake()
 		{
 			EnsureInit();
@@ -168,6 +192,11 @@ namespace Health
 		{
 			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
 		}
+
+
+
+		#endregion
+
 
 		/// Add any missing systems:
 		private void EnsureInit()
@@ -205,10 +234,10 @@ namespace Health
 			EnsureInit();
 			mobID = PlayerManager.Instance.GetMobID();
 			ResetBodyParts();
-			if (MaxHealth <= 0)
+			if (maxHealth <= 0)
 			{
-				Logger.LogWarning($"Max health ({MaxHealth}) set to zero/below zero!", Category.Health);
-				MaxHealth = 1;
+				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
+				maxHealth = 1;
 			}
 
 			//Generate BloodType and DNA
@@ -382,7 +411,7 @@ namespace Health
 
 			var prevHealth = OverallHealth;
 
-			applyDamageEvent?.Invoke(damagedBy);
+			ApplyDamageEvent?.Invoke(damagedBy);
 
 			LastDamageType = damageType;
 			LastDamagedBy = damagedBy;
@@ -535,7 +564,7 @@ namespace Health
 		[Server]
 		protected virtual void CalculateOverallHealth()
 		{
-			float newHealth = MaxHealth;
+			float newHealth = maxHealth;
 			newHealth -= CalculateOverallBodyPartDamage();
 			newHealth -= CalculateOverallBloodLossDamage();
 			newHealth -= bloodSystem.OxygenDamage;
@@ -577,7 +606,7 @@ namespace Health
 		/// Blood Loss and Toxin damage:
 		public int CalculateOverallBloodLossDamage()
 		{
-			float maxBloodDmg = Mathf.Abs(DeadThreshold) + MaxHealth;
+			float maxBloodDmg = Mathf.Abs(DeadThreshold) + maxHealth;
 			float bloodDmg = 0f;
 			if (bloodSystem.BloodLevel < (int)BloodVolume.SAFE)
 			{
@@ -831,7 +860,7 @@ namespace Health
 		public void OnSpawnServer(SpawnInfo info)
 		{
 			ConsciousState = ConsciousState.CONSCIOUS;
-			OverallHealth = MaxHealth;
+			OverallHealth = maxHealth;
 			ResetBodyParts();
 			CalculateOverallHealth();
 		}
