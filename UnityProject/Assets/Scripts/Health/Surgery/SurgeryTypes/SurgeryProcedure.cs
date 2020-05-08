@@ -2,67 +2,53 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class SurgeryProcedure
+namespace Health
 {
-    protected static readonly StandardProgressActionConfig ProgressConfig
-        = new StandardProgressActionConfig(StandardProgressActionType.Restrain);
+    [CreateAssetMenu(fileName = "SurgeryProcedure", menuName = "ScriptableObjects/Surgery/SurgeryProcedure")]
+    public class SurgeryProcedure : ScriptableObject
+    {
+        [SerializeField]
+        private List<SurgeryStep> surgerySteps = null;
     
-    private int currentStep = 1;
-
-    public int CurrentStep
-    {
-        get => currentStep;
-        set => currentStep = Mathf.Clamp(value, 1, stepAndTool.Count);
+        public List<SurgeryStep> SurgerySteps
+        {
+            get => surgerySteps;
+        }
     }
 
-    protected Dictionary<int, SurgeryToolType> stepAndTool = new Dictionary<int, SurgeryToolType>();
-
-    public Dictionary<int, SurgeryToolType> StepAndTool
+    [System.Serializable]
+    public class SurgeryStep
     {
-        get => stepAndTool;
-    }
-
-    /// <summary>
-    /// Used to check if the surgery procedure is available. Some procedures has special requirements
-    /// that can vary. Will return true, if not overrided.
-    /// </summary>
-    /// <returns></returns>
-    public virtual bool IsAvailable()
-    {
-        return true;
-    }
+        /// <summary>
+        /// The step number in the surgery procedure. 1 is the first step after a procedure has been chosen.
+        /// </summary>
+        [SerializeField]
+        private int stepNumber = 1;
+        public int StepNumber => stepNumber;
     
-    /// <summary>
-    /// Used by Operable to determine if the right tool at the right step is used by a performer.
-    /// </summary>
-    public abstract bool ValidateInteraction(Interaction interaction);
+        /// <summary>
+        /// The tool that can be used in this single step.
+        /// </summary>
+        [SerializeField]
+        private SurgeryToolType toolType = SurgeryToolType.None;
+        public SurgeryToolType ToolType
+        {
+            get => toolType;
+        }
+        /// <summary>
+        /// The effects that should happen when the progress bar finishes and the step is successful
+        /// </summary>
+        [SerializeField]
+        private List<SurgeryEffect> onSuccessEffects = null;
 
-    /// <summary>
-    /// The action that should be performed when ValidateInteraction is true
-    /// </summary>
-    public abstract void PerformInteraction(Interaction interaction, RegisterTile targetLocation);
-
-    /// <summary>
-    /// Used for calculating the time it takes to perform one surgery step
-    /// </summary>
-    /// <param name="surgeryToolUsed">The SurgeryTool component of an item</param>
-    /// <returns></returns>
-    protected virtual float CalculateSurgeryStepTime(SurgeryTool surgeryToolUsed)
-    {
-        //Do time calculation
-        
-        //Return perform time
-        return 10f;
-    }
-
-    /// <summary>
-    /// Used for rolling the success chance of the surgery.
-    /// </summary>
-    /// <returns></returns>
-    protected virtual bool RollSuccessChance()
-    {
-        //TODO: Need to check tool efficiency%, table efficiency%, chemical efficiency%
-        return true;
+        public List<SurgeryEffect> OnSuccessEffects => onSuccessEffects;
+    
+        /// <summary>
+        /// The effects that should happen when the progress bar finishes and the step is failing
+        /// </summary>
+        [SerializeField] 
+        private List<SurgeryEffect> onFailureEffects = null;
+    
+        public List<SurgeryEffect> OnFailureEffects => onFailureEffects;
     }
 }
-

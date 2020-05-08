@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fafc5f1089314646a1424b4a93dc0c8, type: 3}
+  m_Name: Amputation
+  m_EditorClassIdentifier: 
+  surgerySteps:
+  - stepNumber: 1
+    toolType: 2
+    onSuccessEffects:
+    - {fileID: 11400000, guid: 608f605a94b5fa1428156b9b50bb41d6, type: 2}
+    - {fileID: 0}
+    onFailureEffects: []
+  - stepNumber: 2
+    toolType: 3
+    onSuccessEffects: []
+    onFailureEffects: []
+  - stepNumber: 0
+    toolType: 0
+    onSuccessEffects: []
+    onFailureEffects: []
+  - stepNumber: 0
+    toolType: 0
+    onSuccessEffects: []
+    onFailureEffects: []

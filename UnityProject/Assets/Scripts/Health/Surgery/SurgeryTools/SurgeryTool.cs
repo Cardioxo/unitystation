@@ -4,6 +4,11 @@ using UnityEngine;
 //This component allows an item to become a surgery tool.
 public class SurgeryTool : MonoBehaviour
 {
+    public List<SurgeryToolProperty> SurgeryToolProperties = null;
+}
+
+public class SurgeryToolProperty
+{
     private SurgeryToolType toolType = SurgeryToolType.None;
 
     public SurgeryToolType ToolType

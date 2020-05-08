@@ -12,4 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 796a20b664f93cb47a5c84fa31c1fa7a, type: 3}
   m_Name: Arm Surgeries
   m_EditorClassIdentifier: 
-  SurgeryTypes: []
+  SurgeryProcedures:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

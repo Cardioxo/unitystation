@@ -9,12 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ea1ec080ca6c9a4a95eb0db20f07cc1, type: 3}
-  m_Name: SurgeryOptions
+  m_Script: {fileID: 11500000, guid: 1617b79d426a41f4c97a0979aafb08be, type: 3}
+  m_Name: StandardFailureEffects
   m_EditorClassIdentifier: 
-  SurgeryTypesUnderBodyPart:
-    m_keys: 000000000800000002000000
-    m_values:
-    - {fileID: 11400000, guid: 47314aadb59abd14ab42ea39169bb90e, type: 2}
-    - {fileID: 0}
-    - {fileID: 0}
