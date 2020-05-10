@@ -61,16 +61,16 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 			}
 
 			var bodyPart = bodyParts[coveredPart];
-			foreach (var part in organic.BodyParts.Where(part => part.Type == bodyPart))
+			foreach (var part in organic.bodyParts.Where(part => part.bodyPartData.bodyPartType == bodyPart))
 			{
 				if (remove)
 				{
-					part.armor -= armor;
+					part.bodyPartData.armor -= armor;
 					break;
 				}
 				else
 				{
-					part.armor += armor;
+					part.bodyPartData.armor += armor;
 					break;
 				}
 			}

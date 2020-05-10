@@ -32,9 +32,9 @@ namespace Health
 		public bool IsMangled => isMangled;
 		public bool IsDismembered => isDismembered;
 
-		public event Action<bool> MangledStateChanged;
-		public event Action<bool> BleedingStateChanged;
-		public event Action<bool> DismemberStateChanged;
+		public event Action<BodyPart, bool> MangledStateChanged;
+		public event Action<BodyPart, bool> BleedingStateChanged;
+		public event Action<BodyPart, bool> DismemberStateChanged;
 		public event Action<BodyPartData> BodyPartChanged;
 
 		public override void OnStartServer()
@@ -84,7 +84,7 @@ namespace Health
 			UpdateSeverity();
 		}
 
-		public virtual void HealDamage(int damage, DamageType type)
+		public virtual void HealDamage(float damage, DamageType type)
 		{
 			switch (type)
 			{
@@ -129,7 +129,7 @@ namespace Health
 			bodyPartData = dismemberData;
 			isDismembered = true;
 			BodyPartChanged?.Invoke(bodyPartData);
-			DismemberStateChanged?.Invoke(isDismembered);
+			DismemberStateChanged?.Invoke(this, isDismembered);
 		}
 
 		private void CheckMangled()
@@ -142,7 +142,7 @@ namespace Health
 			}
 
 			isMangled = newMangled;
-			MangledStateChanged?.Invoke(isMangled);
+			MangledStateChanged?.Invoke(this, isMangled);
 		}
 
 		private void CheckBleeding()
@@ -155,7 +155,7 @@ namespace Health
 			}
 
 			isBleeding = newBleeding;
-			BleedingStateChanged?.Invoke(isBleeding);
+			BleedingStateChanged?.Invoke(this, isBleeding);
 		}
 
 		[Server]
@@ -164,12 +164,19 @@ namespace Health
 			if (isDismembered)
 			{
 				isDismembered = false;
-				DismemberStateChanged?.Invoke(isDismembered);
+				DismemberStateChanged?.Invoke(this, isDismembered);
 			}
 
 			bodyPartData = bodyPart;
 			Init();
 			BodyPartChanged?.Invoke(bodyPart);
+		}
+
+		[Server]
+		public void RestoreDamage()
+		{
+			HealDamage(-bruteDamage, DamageType.Brute);
+			HealDamage(-burnDamage, DamageType.Burn);
 		}
 
 		public float GetDamageValue(DamageType damageType)//TODO this looks like unnecessary. Find usages on old class and purge

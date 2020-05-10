@@ -10,9 +10,9 @@ namespace Health
 	public class BloodSystem : MonoBehaviour
 	{
 		public float MaxToxinDamage = 200;
-		
+
 		private float toxinDamage = 0;
-		
+
 		/// <summary>
 		/// How much toxin is found in the blood.
 		/// </summary>
@@ -21,7 +21,7 @@ namespace Health
 			get { return Mathf.Clamp(toxinDamage, 0, MaxToxinDamage); }
 			set { toxinDamage = Mathf.Clamp(value, 0, MaxToxinDamage); }
 		}
-		
+
 		/// <summary>
 		/// How much toxin is found in the blood. 0% to 100%
 		/// </summary>
@@ -115,12 +115,12 @@ namespace Health
 			if (IsBleeding)
 			{
 				float bleedVolume = 0;
-				for (int i = 0; i < healthSystem.BodyParts.Count; i++)
+				for (int i = 0; i < healthSystem.bodyParts.Count; i++)
 				{
-					BodyPartBehaviour BPB = healthSystem.BodyParts[i];
-					if (BPB.isBleeding)
+					BodyPart bp = healthSystem.bodyParts[i];
+					if (bp.IsBleeding)
 					{
-						bleedVolume += (BPB.BruteDamage * 0.013f);
+						bleedVolume += (bp.BruteDamage * 0.013f);
 					}
 				}
 				LoseBlood(bleedVolume);
@@ -132,7 +132,7 @@ namespace Health
 		/// <summary>
 		/// Subtract an amount of blood from the player. Server Only
 		/// </summary>
-		public void AddBloodLoss(int amount, BodyPartBehaviour bodyPart)
+		public void AddBloodLoss(int amount, BodyPart bodyPart)
 		{
 			if (amount <= 0)
 			{
@@ -141,9 +141,10 @@ namespace Health
 			TryBleed(bodyPart);
 		}
 
-		private void TryBleed(BodyPartBehaviour bodyPart)
+		private void TryBleed(BodyPart bodyPart)
 		{
-			bodyPart.isBleeding = true;
+			//TODO set a way to set bleeding status
+			// bodyPart.isBleeding = true;
 			//don't start another coroutine when already bleeding
 			if (!IsBleeding)
 			{
@@ -157,24 +158,27 @@ namespace Health
 		public void StopBleeding(BodyPartBehaviour bodyPart)
 		{
 			bodyPart.isBleeding = false;
-			for (int i = 0; i < healthSystem.BodyParts.Count; i++)
+			foreach (var BPB in healthSystem.bodyParts)
 			{
-				BodyPartBehaviour BPB = healthSystem.BodyParts[i];
-				if(BPB.isBleeding){
+				if(BPB.IsBleeding)
+				{
 					return;
 				}
 			}
+
 			IsBleeding = false;
 		}
 
 		/// <summary>
 		/// Stops bleeding on all bodyparts. Server Only.
 		/// </summary>
-		public void StopBleedingAll(){
-			for (int i = 0; i < healthSystem.BodyParts.Count; i++)
+		public void StopBleedingAll()
+		{
+			for (int i = 0; i < healthSystem.bodyParts.Count; i++)
 			{
-				BodyPartBehaviour BPB = healthSystem.BodyParts[i];
-				BPB.isBleeding = false;
+				BodyPart BPB = healthSystem.bodyParts[i];
+				//TODO set a way to stop bleeding status
+				// BPB.IsBleeding = false;
 			}
 			IsBleeding = false;
 		}
@@ -234,7 +238,7 @@ namespace Health
 		/// </summary>
 		public void AffectBloodState(BodyPartType bodyPartType, DamageType damageType, float amount, bool isHeal = false)
 		{
-			BodyPartBehaviour bodyPart = healthSystem.FindBodyPart(bodyPartType);
+			BodyPart bodyPart = healthSystem.FindBodyPart(bodyPartType);
 
 			if (isHeal)
 			{
@@ -259,7 +263,7 @@ namespace Health
 		}
 
 		//Do any healing stuff:
-		private void CheckHealing(BodyPartBehaviour bodyPart, DamageType damageType, float healAmt)
+		private void CheckHealing(BodyPart bodyPart, DamageType damageType, float healAmt)
 		{
 			//TODO: PRIORITY! Do Blood healing!
 			Logger.Log("Not implemented: Blood healing.", Category.Health);

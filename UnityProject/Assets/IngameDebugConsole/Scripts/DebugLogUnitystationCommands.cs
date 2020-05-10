@@ -402,7 +402,7 @@ namespace IngameDebugConsole
 			{
 				var playerScript = PlayerManager.LocalPlayerScript;
 				var health = playerScript.OrganicHealthSystem;
-				foreach (var bodyPart in health.BodyParts)
+				foreach (var bodyPart in health.bodyParts)
 				{
 					bodyPart.HealDamage(200, DamageType.Brute);
 					bodyPart.HealDamage(200, DamageType.Burn);

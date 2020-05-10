@@ -55,17 +55,17 @@ public class HealsTheLiving : MonoBehaviour, ICheckedInteractable<HandApply>
 		}
 	}
 
-	private void ServerApplyHeal(BodyPartBehaviour targetBodyPart)
+	private void ServerApplyHeal(BodyPart targetBodyPart)
 	{
 		targetBodyPart.HealDamage(40, healType);
 		stackable.ServerConsume(1);
 
-		HealthBodyPartMessage.Send(targetBodyPart.healthSystem.gameObject, targetBodyPart.healthSystem.gameObject,
-			targetBodyPart.Type, targetBodyPart.healthSystem.GetTotalBruteDamage(),
-			targetBodyPart.healthSystem.GetTotalBurnDamage());
+		HealthBodyPartMessage.Send(targetBodyPart.gameObject, targetBodyPart.gameObject,
+			targetBodyPart.bodyPartData.bodyPartType, targetBodyPart.BruteDamage,
+			targetBodyPart.BurnDamage);
 	}
 
-	private void ServerSelfHeal(GameObject originator, BodyPartBehaviour targetBodyPart)
+	private void ServerSelfHeal(GameObject originator, BodyPart targetBodyPart)
 	{
 		void ProgressComplete()
 		{
