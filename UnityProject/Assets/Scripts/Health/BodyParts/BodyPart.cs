@@ -175,8 +175,8 @@ namespace Health
 		[Server]
 		public void RestoreDamage()
 		{
-			HealDamage(-bruteDamage, DamageType.Brute);
-			HealDamage(-burnDamage, DamageType.Burn);
+			HealDamage(bruteDamage, DamageType.Brute);
+			HealDamage(burnDamage, DamageType.Burn);
 		}
 
 		public float GetDamageValue(DamageType damageType)//TODO this looks like unnecessary. Find usages on old class and purge
