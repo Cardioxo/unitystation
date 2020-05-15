@@ -18,13 +18,14 @@ namespace Health
 
 		private float overallDamage = 0;
 		private DamageSeverity damageSeverity = DamageSeverity.None;
-		private bool isBleeding = false;
 		private float bruteDamage = 0;
 		private float burnDamage = 0;
+		private bool isBleeding = false;
 		private bool isMangled = false;
 		private bool isDismembered = false;
 
 		public float OverallDamage => overallDamage;
+		public float OverallDamagePercentage => (overallDamage / bodyPartData.maxDamage) * 100;
 		public DamageSeverity DamageSeverity => damageSeverity;
 		public bool IsBleeding => isBleeding;
 		public float BruteDamage => bruteDamage;
@@ -74,13 +75,21 @@ namespace Health
 					break;
 			}
 
-			if (damage >= bodyPartData.dismemberThreshold)
+			if (bodyPartData.canBeMangled)
+			{
+				CheckMangled();
+			}
+
+			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )
 			{
 				CheckDismember();
 			}
 
-			CheckBleeding();
-			CheckMangled();
+			if (bodyPartData.canBleed)
+			{
+				CheckBleeding();
+			}
+
 			UpdateSeverity();
 		}
 
@@ -125,7 +134,7 @@ namespace Health
 			}
 
 			//Drop limb
-			Spawn.ServerPrefab(bodyPartData.inGameLimb, gameObject.RegisterTile().WorldPositionServer);
+			Spawn.ServerPrefab(bodyPartData.limbGameObject, gameObject.RegisterTile().WorldPositionServer);
 			bodyPartData = dismemberData;
 			isDismembered = true;
 			BodyPartChanged?.Invoke(bodyPartData);
@@ -147,7 +156,7 @@ namespace Health
 
 		private void CheckBleeding()
 		{
-			bool newBleeding = bruteDamage < 20;
+			bool newBleeding = ((bruteDamage / bodyPartData.maxDamage) * 100) >= bodyPartData.bleedThreshold;
 
 			if (isBleeding == newBleeding)
 			{
@@ -179,7 +188,7 @@ namespace Health
 			HealDamage(burnDamage, DamageType.Burn);
 		}
 
-		public float GetDamageValue(DamageType damageType)//TODO this looks like unnecessary. Find usages on old class and purge
+		public float GetDamageValue(DamageType damageType)
 		{
 			switch (damageType)
 			{

@@ -847,22 +847,22 @@ namespace Health
 			//TODO update clients UI from here.
 			//TODO determine if lives or die from here
 
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		protected virtual void OnBleedingStateChanged(BodyPart bodyPart, bool isBleeding)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isMangled)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		private void OnMangledStateChanged(BodyPart bodyPart, bool isMangled)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		#endregion

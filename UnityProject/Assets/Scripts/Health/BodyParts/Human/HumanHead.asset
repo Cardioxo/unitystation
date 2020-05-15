@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a641183eb51e47eaa4bf9c2552167cc8, type: 3}
+  m_Name: HumanHead
+  m_EditorClassIdentifier: 
+  bodyPartType: 0
+  sexualDimorphism: 1
+  maxDamage: 200
+  canBeMangled: 1
+  mangledThreshold: 50
+  armor:
+    Melee: 0
+    Bullet: 0
+    Laser: 0
+    Energy: 0
+    Bomb: 0
+    Rad: 0
+    Fire: 0
+    Acid: 0
+    Magic: 0
+    Bio: 0
+  canBeDismembered: 1
+  dismemberThreshold: 30
+  dismemberChance: 10
+  canBleed: 1
+  bleedThreshold: 10
+  containOrgans: 1
+  organs:
+  - brain
+  - eyes
+  - tongue
+  mobSprite:
+    Texture: {fileID: 2800000, guid: 435628dc8190a4d49bf9554f7c1aa8dc, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 435628dc8190a4d49bf9554f7c1aa8dc, type: 3}
+    - {fileID: 21300002, guid: 435628dc8190a4d49bf9554f7c1aa8dc, type: 3}
+    - {fileID: 21300004, guid: 435628dc8190a4d49bf9554f7c1aa8dc, type: 3}
+    - {fileID: 21300006, guid: 435628dc8190a4d49bf9554f7c1aa8dc, type: 3}
+    EquippedData: {fileID: 4900000, guid: 33cca0b35cc1c2b46ae09944fe3ff85b, type: 3}
+  mobSpriteFemale:
+    Texture: {fileID: 2800000, guid: 62bfbe08ede436140ab4a950b0860693, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 62bfbe08ede436140ab4a950b0860693, type: 3}
+    - {fileID: 21300002, guid: 62bfbe08ede436140ab4a950b0860693, type: 3}
+    - {fileID: 21300004, guid: 62bfbe08ede436140ab4a950b0860693, type: 3}
+    - {fileID: 21300006, guid: 62bfbe08ede436140ab4a950b0860693, type: 3}
+    EquippedData: {fileID: 4900000, guid: 55ffc5f494efae84f9602cc3da09616a, type: 3}
+  limbGameObject: {fileID: 4486381765912060504, guid: 5b4fe80ff62d3a54e85a6af0622567c6,
+    type: 3}
+  damageOverlay:
+  - Texture: {fileID: 2800000, guid: 0082cc306935702449f7124eae339ad3, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 0082cc306935702449f7124eae339ad3, type: 3}
+    - {fileID: 21300002, guid: 0082cc306935702449f7124eae339ad3, type: 3}
+    - {fileID: 21300004, guid: 0082cc306935702449f7124eae339ad3, type: 3}
+    - {fileID: 21300006, guid: 0082cc306935702449f7124eae339ad3, type: 3}
+    EquippedData: {fileID: 4900000, guid: 18f3dc1ee4238894bb474f58a1d1da58, type: 3}
+  - Texture: {fileID: 2800000, guid: d54494a46fdf13a45b67a8a466577e8a, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: d54494a46fdf13a45b67a8a466577e8a, type: 3}
+    - {fileID: 21300002, guid: d54494a46fdf13a45b67a8a466577e8a, type: 3}
+    - {fileID: 21300004, guid: d54494a46fdf13a45b67a8a466577e8a, type: 3}
+    - {fileID: 21300006, guid: d54494a46fdf13a45b67a8a466577e8a, type: 3}
+    EquippedData: {fileID: 4900000, guid: 27d475427c212dd46b6774c364a44126, type: 3}
+  - Texture: {fileID: 2800000, guid: 1162ed6ed0fff9a40a3bb5acf0b35489, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 1162ed6ed0fff9a40a3bb5acf0b35489, type: 3}
+    - {fileID: 21300002, guid: 1162ed6ed0fff9a40a3bb5acf0b35489, type: 3}
+    - {fileID: 21300004, guid: 1162ed6ed0fff9a40a3bb5acf0b35489, type: 3}
+    - {fileID: 21300006, guid: 1162ed6ed0fff9a40a3bb5acf0b35489, type: 3}
+    EquippedData: {fileID: 4900000, guid: d03aa6c8f9aab5d40b90993b77e2f232, type: 3}
+  - Texture: {fileID: 2800000, guid: 158594d4bc9126143849722ea1a2862e, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 158594d4bc9126143849722ea1a2862e, type: 3}
+    - {fileID: 21300002, guid: 158594d4bc9126143849722ea1a2862e, type: 3}
+    - {fileID: 21300004, guid: 158594d4bc9126143849722ea1a2862e, type: 3}
+    - {fileID: 21300006, guid: 158594d4bc9126143849722ea1a2862e, type: 3}
+    EquippedData: {fileID: 4900000, guid: 348ee7dc5da7bd34ba0abaf21c558701, type: 3}
+  - Texture: {fileID: 2800000, guid: 9a7c5b164faa60046b3068840bcf8155, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 9a7c5b164faa60046b3068840bcf8155, type: 3}
+    - {fileID: 21300002, guid: 9a7c5b164faa60046b3068840bcf8155, type: 3}
+    - {fileID: 21300004, guid: 9a7c5b164faa60046b3068840bcf8155, type: 3}
+    - {fileID: 21300006, guid: 9a7c5b164faa60046b3068840bcf8155, type: 3}
+    EquippedData: {fileID: 4900000, guid: 4a9dec196a260c34d80277357e9609d0, type: 3}
+  - Texture: {fileID: 2800000, guid: 1365d7914960100459d6676ea099ca4e, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: 1365d7914960100459d6676ea099ca4e, type: 3}
+    - {fileID: 21300002, guid: 1365d7914960100459d6676ea099ca4e, type: 3}
+    - {fileID: 21300004, guid: 1365d7914960100459d6676ea099ca4e, type: 3}
+    - {fileID: 21300006, guid: 1365d7914960100459d6676ea099ca4e, type: 3}
+    EquippedData: {fileID: 4900000, guid: fdea3e437f4ff894fbf2ad05f7557204, type: 3}
+  mangledSprite:
+    Texture: {fileID: 0}
+    Sprites: []
+    EquippedData: {fileID: 0}
+  debrained:
+    Texture: {fileID: 2800000, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+    - {fileID: 21300002, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+    - {fileID: 21300004, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+    - {fileID: 21300006, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+    EquippedData: {fileID: 4900000, guid: 0bdc3b4b5d1b4fd47860ccd14e99e1e4, type: 3}
+  missingEyes:
+    Texture: {fileID: 2800000, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+    Sprites:
+    - {fileID: 21300000, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+    - {fileID: 21300002, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+    - {fileID: 21300004, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+    - {fileID: 21300006, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+    EquippedData: {fileID: 4900000, guid: 11cd45adaf87c224b9227d3df966a92b, type: 3}
+  blueDamageMonitorIcon: {fileID: 21300000, guid: 8c9e96de87474c54e833e75b5a6b4124,
+    type: 3}
+  greenDamageMonitorIcon: {fileID: 21300000, guid: 8c9e96de87474c54e833e75b5a6b4124,
+    type: 3}
+  yellowDamageMonitorIcon: {fileID: 21300000, guid: 4815bcace68597840be2e8ea27b1a1ec,
+    type: 3}
+  orangeDamageMonitorIcon: {fileID: 21300000, guid: f73ec5d7266d51141ab7d961fb6175ef,
+    type: 3}
+  darkOrangeDamageMonitorIcon: {fileID: 21300000, guid: cde39b879327bbf42a5e728bae858829,
+    type: 3}
+  redDamageMonitorIcon: {fileID: 21300000, guid: 226f467c9d93cef4186dc78bdac26bad,
+    type: 3}
+  grayDamageMonitorIcon: {fileID: 21300000, guid: 226f467c9d93cef4186dc78bdac26bad,
+    type: 3}
