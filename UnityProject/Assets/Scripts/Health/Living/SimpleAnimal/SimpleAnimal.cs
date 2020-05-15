@@ -40,8 +40,9 @@ public class SimpleAnimal : HealthSystem
 	}
 
 	[Server]
-	protected override void OnDeathActions()
+	protected override void OnDeath()
 	{
+		base.OnDeath();
 		deadState = true;
 	}
 

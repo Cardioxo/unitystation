@@ -988,8 +988,8 @@ MonoBehaviour:
   - {fileID: 2065099339671095808}
   - {fileID: 7138985241689646151}
   - {fileID: 1055051901913452721}
-  - {fileID: 8237324266564545635}
   - {fileID: 7209978197434642636}
+  - {fileID: 8237324266564545635}
   - {fileID: 5154320158277590391}
   allowKnifeHarvest: 1
   metabolism: {fileID: 0}

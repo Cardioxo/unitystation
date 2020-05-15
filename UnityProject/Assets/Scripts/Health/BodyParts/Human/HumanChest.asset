@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a641183eb51e47eaa4bf9c2552167cc8, type: 3}
   m_Name: HumanChest
   m_EditorClassIdentifier: 
+  initialName: 
+  initialDescription: 
   bodyPartType: 1
   sexualDimorphism: 1
   maxDamage: 200

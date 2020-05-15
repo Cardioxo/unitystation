@@ -49,8 +49,9 @@ namespace Health
 			base.OnStartClient();
 		}
 
-		protected override void OnDeathActions()
+		protected override void OnDeath()
 		{
+			base.OnDeath();
 			if (CustomNetworkManager.Instance._isServer)
 			{
 				ConnectedPlayer player = PlayerList.Instance.Get(gameObject);

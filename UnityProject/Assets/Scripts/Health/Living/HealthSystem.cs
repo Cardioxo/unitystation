@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Atmospherics;
+using Health;
 using Light2D;
 using Mirror;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
@@ -63,7 +65,7 @@ namespace Health
 		/// via the inspector. There needs to be at least 1 chest bodypart for a living animal
 		/// </summary>
 		[Header("Fill BodyPart fields in via Inspector:")]
-		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")]
+		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")] [ReorderableList]
 		//public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();//TODO this is old implementation, commenting for now
 		public List<BodyPart> bodyParts = new List<BodyPart>();
 		//For meat harvest (pete etc)
@@ -305,7 +307,7 @@ namespace Health
 
 			LastDamageType = damageType;
 			LastDamagedBy = damagedBy;
-			bodyPart.ReceiveDamage(damageType, bodyPart.bodyPartData.armor.GetDamage(damage, attackType));
+			bodyPart.ReceiveDamage(damageType, bodyPart.Armor.GetDamage(damage, attackType));
 			HealthBodyPartMessage.Send(
 				gameObject,
 				gameObject,
@@ -508,33 +510,38 @@ namespace Health
 		}
 
 		#region Update loop
-		//TODO take everything you can't outside the update loop
+		//TODO take everything you can outside the update loop
 
 		//Handled via UpdateManager
 		protected virtual void UpdateMe()
 		{
 			//Server Only:
-			if (isServer && !IsDead)
+			if (!isServer || IsDead)
 			{
-				tick += Time.deltaTime;
-				if (tick > tickRate)
-				{
-					tick = 0f;
-					if (fireStacks > 0)
-					{
-						HandleFireDamage();
-					}
-					//TODO stop calculation every tick, calculate only when health changed
-					CalculateOverallHealth();
-					CheckHealthAndUpdateConsciousState();
-				}
+				return;
 			}
+
+			tick += Time.deltaTime;
+			if (tick < tickRate)
+			{
+				return;
+			}
+
+			tick = 0f;
+			if (fireStacks > 0)
+			{
+				HandleFireDamage();
+			}
+
+			//TODO stop calculation every tick, calculate only when health changed
+			// CalculateOverallHealth();
+			// CheckHealthAndUpdateConsciousState();
 		}
 
 		protected void HandleFireDamage()
 		{
 			//TODO: Burn clothes (see species.dm handle_fire)
-			ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Internal, DamageType.Burn);
+			ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Fire, DamageType.Burn);
 			//gradually deplete fire stacks
 			SyncFireStacks(fireStacks, fireStacks - 0.1f);
 			//instantly stop burning if there's no oxygen at this location
@@ -581,13 +588,12 @@ namespace Health
 			OverallHealth = newHealth;
 		}
 
-		public float CalculateOverallBodyPartDamage()
+		protected float CalculateOverallBodyPartDamage()
 		{
 			float bodyPartDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				bodyPartDmg += bodyParts[i].BruteDamage;
-				bodyPartDmg += bodyParts[i].BurnDamage;
+				bodyPartDmg += part.OverallDamage;
 			}
 			return bodyPartDmg;
 		}
@@ -595,9 +601,9 @@ namespace Health
 		public float GetTotalBruteDamage()
 		{
 			float bruteDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				bruteDmg += bodyParts[i].BruteDamage;
+				bruteDmg += part.BruteDamage;
 			}
 			return bruteDmg;
 		}
@@ -605,9 +611,9 @@ namespace Health
 		public float GetTotalBurnDamage()
 		{
 			float burnDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				burnDmg += bodyParts[i].BurnDamage;
+				burnDmg += part.BurnDamage;
 			}
 			return burnDmg;
 		}
@@ -641,10 +647,10 @@ namespace Health
 			{
 				return;
 			}
+
 			OnDeathNotifyEvent?.Invoke();
 			afterDeathDamage = 0;
 			ConsciousState = ConsciousState.DEAD;
-			OnDeathActions();
 			bloodSystem.StopBleedingAll();
 			//stop burning
 			//TODO: When clothes/limb burning is implemented, probably should keep burning until clothes are burned up
@@ -679,35 +685,49 @@ namespace Health
 		/// </summary>
 		protected virtual void CheckHealthAndUpdateConsciousState()
 		{
-			if (ConsciousState != ConsciousState.CONSCIOUS && bloodSystem.OxygenDamage < OxygenPassOut && OverallHealth > SoftCritThreshold)
+			if (ShouldBeDead())
 			{
-				Logger.LogFormat( "{0}, back on your feet!", Category.Health, gameObject.name );
-				Uncrit();
+				Death();
 				return;
 			}
 
-			if (OverallHealth <= SoftCritThreshold || bloodSystem.OxygenDamage > OxygenPassOut)
+			if (ShouldBeUnconscious())
 			{
-				if (OverallHealth <= CritThreshold)
-				{
-					Crit(false);
-				}else{
-					Crit(true); //health isn't low enough for crit, but might be low enough for soft crit or passed out from lack of oxygen
-				}
+				Crit(!(OverallHealth <= CritThreshold));
+				Logger.LogFormat(
+					"{0} is in {1}",
+					Category.Health,
+					gameObject.name,
+					OverallHealth <= CritThreshold ? "softcrit" : "crit");
+				return;
 			}
-			if (NotSuitableForDeath())
+
+			if (!ShouldBeConscious())
 			{
 				return;
 			}
-			Death();
+
+			Logger.LogFormat( "{0}, back on your feet!", Category.Health, gameObject.name );
+			Uncrit();
+			return;
 		}
 
-		private bool NotSuitableForDeath()
+		private bool ShouldBeConscious()
 		{
-			return OverallHealth > DeadThreshold || IsDead;
+			return ConsciousState != ConsciousState.CONSCIOUS
+			       && bloodSystem.OxygenDamage < OxygenPassOut
+			       && OverallHealth >= SoftCritThreshold;
 		}
 
-		protected abstract void OnDeathActions();
+		private bool ShouldBeUnconscious()
+		{
+			return  OverallHealth <= SoftCritThreshold || bloodSystem.OxygenDamage > OxygenPassOut;
+		}
+
+		private bool ShouldBeDead()
+		{
+			return OverallHealth < DeadThreshold && !IsDead;
+		}
 
 		protected void RaiseDeathNotifyEvent()
 		{
@@ -779,12 +799,19 @@ namespace Health
 		public void UpdateClientBodyPartStats(BodyPartType bodyPartType, float bruteDamage, float burnDamage)
 		{
 			var bodyPart = FindBodyPart(bodyPartType);
-			if (bodyPart != null)
+			if (bodyPart == null)
 			{
-				//	Logger.Log($"Update stats for {gameObject.name} body part {bodyPartType.ToString()} BruteDmg: {bruteDamage} BurnDamage: {burnDamage}", Category.Health);
-
-				// bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
+				return;
 			}
+
+			Logger.Log(
+				$"Update stats for {gameObject.name}" +
+				$" body part {bodyPartType.ToString()}" +
+				$" BruteDmg: {bruteDamage} " +
+				$" BurnDamage: {burnDamage}",
+				Category.Health);
+
+			bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
 		}
 		#endregion
 
@@ -843,19 +870,20 @@ namespace Health
 
 		protected virtual void OnDamageReceived(GameObject damagedBy)
 		{
-			//TODO do health calculations here.
+			CalculateOverallHealth();
 			//TODO update clients UI from here.
-			//TODO determine if lives or die from here
+			CheckHealthAndUpdateConsciousState();
 
 			// throw new NotImplementedException();
 		}
 
 		protected virtual void OnBleedingStateChanged(BodyPart bodyPart, bool isBleeding)
 		{
+			//TODO start or stop blood loss in blood system from here
 			// throw new NotImplementedException();
 		}
 
-		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isMangled)
+		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isDismembered)
 		{
 			// throw new NotImplementedException();
 		}

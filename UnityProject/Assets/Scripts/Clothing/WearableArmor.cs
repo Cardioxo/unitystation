@@ -65,12 +65,12 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 			{
 				if (remove)
 				{
-					part.bodyPartData.armor -= armor;
+					part.Armor -= armor;
 					break;
 				}
 				else
 				{
-					part.bodyPartData.armor += armor;
+					part.Armor += armor;
 					break;
 				}
 			}

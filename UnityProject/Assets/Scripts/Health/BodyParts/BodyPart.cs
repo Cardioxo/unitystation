@@ -1,4 +1,5 @@
 ﻿using System;
+using Health;
 using Mirror;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace Health
 		[SerializeField] [Tooltip("Body part data to load when this member has been dismembered")]
 		private BodyPartData dismemberData = null;
 
-		private float overallDamage = 0;
+		private float overallHealth = 0;
 		private DamageSeverity damageSeverity = DamageSeverity.None;
 		private float bruteDamage = 0;
 		private float burnDamage = 0;
@@ -24,33 +25,42 @@ namespace Health
 		private bool isMangled = false;
 		private bool isDismembered = false;
 
-		public float OverallDamage => overallDamage;
-		public float OverallDamagePercentage => (overallDamage / bodyPartData.maxDamage) * 100;
+		public float OverallHealth => overallHealth;
+		public float OverallHealthPercentage => (overallHealth / bodyPartData.maxDamage) * 100;
+		public float OverallDamage => bodyPartData.maxDamage - overallHealth;
+		public float OverallDamagePercentage => (100 - OverallHealthPercentage);
 		public DamageSeverity DamageSeverity => damageSeverity;
 		public bool IsBleeding => isBleeding;
 		public float BruteDamage => bruteDamage;
 		public float BurnDamage => burnDamage;
 		public bool IsMangled => isMangled;
 		public bool IsDismembered => isDismembered;
+		public Armor Armor { get; set; } = new Armor();
 
 		public event Action<BodyPart, bool> MangledStateChanged;
 		public event Action<BodyPart, bool> BleedingStateChanged;
 		public event Action<BodyPart, bool> DismemberStateChanged;
 		public event Action<BodyPartData> BodyPartChanged;
 
-		public override void OnStartServer()
+		// public override void OnStartServer()
+		// {
+		// 	Init();
+		// }
+
+		private void OnEnable()
 		{
 			Init();
 		}
 
 		private void Init()
 		{
-			overallDamage = bodyPartData.maxDamage;
-			isBleeding = false;
 			bruteDamage = 0;
 			burnDamage = 0;
+			isBleeding = false;
 			isMangled = false;
 			isDismembered = false;
+			overallHealth = bodyPartData.maxDamage;
+
 
 			//TODO call update for sprites!
 		}
@@ -75,23 +85,26 @@ namespace Health
 					break;
 			}
 
-			if (bodyPartData.canBeMangled)
-			{
-				CheckMangled();
-			}
-
-			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )
-			{
-				CheckDismember();
-			}
+			CalculateOverall();
 
 			if (bodyPartData.canBleed)
 			{
 				CheckBleeding();
 			}
 
+			if (bodyPartData.canBeMangled)
+			{
+				CheckMangled();
+			}
+
+			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )//TODO this is for testing
+			{
+				CheckDismember();
+			}
+
 			UpdateSeverity();
 		}
+
 
 		public virtual void HealDamage(float damage, DamageType type)
 		{
@@ -105,23 +118,30 @@ namespace Health
 					burnDamage -= damage;
 					break;
 			}
+
+			CalculateOverall();
 			CheckBleeding();
 			CheckMangled();
 			UpdateSeverity();
 		}
 
+		private void CalculateOverall()
+		{
+			overallHealth -= (bruteDamage + burnDamage);
+		}
+
 		private void UpdateSeverity()
 		{
 			// update UI limbs depending on their severity of damage
-			float severity = (float) (overallDamage / bodyPartData.maxDamage) * 100;
-			foreach (DamageSeverity _severity in Enum.GetValues(typeof(DamageSeverity)))
+			float severity = OverallDamagePercentage;
+			foreach (DamageSeverity value in Enum.GetValues(typeof(DamageSeverity)))
 			{
-				if (severity >= (int) _severity)
+				if (severity >= (int) value)
 				{
 					continue;
 				}
 
-				damageSeverity = _severity;
+				damageSeverity = value;
 				break;
 			}
 		}
@@ -134,7 +154,9 @@ namespace Health
 			}
 
 			//Drop limb
-			Spawn.ServerPrefab(bodyPartData.limbGameObject, gameObject.RegisterTile().WorldPositionServer);
+			var limb = Spawn.ServerPrefab(bodyPartData.limbGameObject, gameObject.RegisterTile().WorldPositionServer);
+			limb.GameObject.GetComponentInChildren<SpriteHandler>().gameObject.SetActive(true);
+
 			bodyPartData = dismemberData;
 			isDismembered = true;
 			BodyPartChanged?.Invoke(bodyPartData);
@@ -143,7 +165,7 @@ namespace Health
 
 		private void CheckMangled()
 		{
-			bool newMangled = overallDamage < bodyPartData.mangledThreshold;
+			bool newMangled = OverallHealthPercentage >= bodyPartData.mangledThreshold;
 
 			if (isMangled == newMangled)
 			{
@@ -218,6 +240,13 @@ namespace Health
 			//-----------------------------------------------------------------
 			// Maybe we should move updating icons to HealthSystem
 			return PlayerManager.LocalPlayerScript == gameObject.GetComponentInParent<PlayerScript>();
+		}
+
+		public void UpdateClientBodyPartStat(float brute, float burn)
+		{
+			bruteDamage = brute;
+			burnDamage = burn;
+			UpdateSeverity();
 		}
 	}
 }
