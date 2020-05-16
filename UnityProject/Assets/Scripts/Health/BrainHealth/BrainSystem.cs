@@ -26,7 +26,18 @@ namespace Health
 		/// </summary>
 		/// <returns>Percentage between 0% and 100%.
 		/// -1 means there is no brain present</returns>
-		public int BrainDamageAmt { get { if (brain == null) { return -1; } return Mathf.Clamp(brain.BrainDamage, 0, 101); } }
+		public int BrainDamageAmt
+		{
+			get
+			{
+				if (brain == null)
+				{
+					return -1;
+				}
+
+				return Mathf.Clamp(brain.BrainDamage, 0, 101);
+			}
+		}
 		public int BrainDamageAmtClient { get; private set; }
 
 		private float tickRate = 1f;

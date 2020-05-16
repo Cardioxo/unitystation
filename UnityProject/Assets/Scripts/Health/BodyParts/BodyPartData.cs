@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Health;
+﻿using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -9,12 +7,6 @@ namespace Health
 	[CreateAssetMenu(fileName = "BodyPartData", menuName = "ScriptableObjects/Health/BodyPartData")]
 	public class BodyPartData : ScriptableObject
 	{
-		[Tooltip("What this limb is called when it is fresh new")]
-		public string initialName = string.Empty;
-
-		[Tooltip("How do we describe this limb when it is fresh new")]
-		public string initialDescription = string.Empty;
-
 		[Tooltip("What archetype of body part is this?")]
 		public BodyPartType bodyPartType = BodyPartType.Chest;
 
@@ -35,8 +27,6 @@ namespace Health
 		public Armor NaturalArmor => naturalArmor;
 
 		[Tooltip("Should this limb be able to be dismembered?")]
-
-
 		public bool canBeDismembered = true;
 
 		[Tooltip("Damage threshold to roll a dismember event for this limb")]

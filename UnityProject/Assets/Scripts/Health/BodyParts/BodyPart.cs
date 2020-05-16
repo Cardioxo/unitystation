@@ -42,11 +42,6 @@ namespace Health
 		public event Action<BodyPart, bool> DismemberStateChanged;
 		public event Action<BodyPartData> BodyPartChanged;
 
-		// public override void OnStartServer()
-		// {
-		// 	Init();
-		// }
-
 		private void OnEnable()
 		{
 			Init();
@@ -59,8 +54,8 @@ namespace Health
 			isBleeding = false;
 			isMangled = false;
 			isDismembered = false;
+			Armor += bodyPartData.NaturalArmor;
 			overallHealth = bodyPartData.maxDamage;
-
 
 			//TODO call update for sprites!
 		}

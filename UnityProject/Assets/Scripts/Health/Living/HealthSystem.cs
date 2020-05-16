@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Atmospherics;
-using Health;
 using Light2D;
 using Mirror;
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
@@ -65,7 +63,7 @@ namespace Health
 		/// via the inspector. There needs to be at least 1 chest bodypart for a living animal
 		/// </summary>
 		[Header("Fill BodyPart fields in via Inspector:")]
-		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")] [ReorderableList]
+		[Tooltip("This creature's default body parts. At least a chest is needed for the simplest of life forms")]
 		//public List<BodyPartBehaviour> BodyParts = new List<BodyPartBehaviour>();//TODO this is old implementation, commenting for now
 		public List<BodyPart> bodyParts = new List<BodyPart>();
 		//For meat harvest (pete etc)
@@ -487,14 +485,10 @@ namespace Health
 			{
 				return bodyParts[searchIndex];
 			}
-			//If nothing is found then try to find a chest component:
-			searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
-			if (searchIndex != -1)
-			{
-				return bodyParts[searchIndex];
-			}
+			//If nothing is found then try to find a chest component
 			// else nothing:
-			return null;
+			searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
+			return searchIndex != -1 ? bodyParts[searchIndex] : null;
 		}
 
 		/// <summary>
