@@ -14,9 +14,6 @@ namespace Health
 		[Tooltip("Scriptable object that contains this body part relevant data")]
 		public BodyPartData bodyPartData = null;
 
-		[SerializeField] [Tooltip("Body part data to load when this member has been dismembered")]
-		private BodyPartData dismemberData = null;
-
 		private float overallHealth = 0;
 		private DamageSeverity damageSeverity = DamageSeverity.None;
 		private float bruteDamage = 0;
@@ -44,10 +41,10 @@ namespace Health
 
 		private void OnEnable()
 		{
-			Init();
+			CleanInit();
 		}
 
-		private void Init()
+		private void CleanInit()
 		{
 			bruteDamage = 0;
 			burnDamage = 0;
@@ -58,6 +55,30 @@ namespace Health
 			overallHealth = bodyPartData.maxDamage;
 
 			//TODO call update for sprites!
+		}
+
+		public void SetValuesInit(BodyPartValues values)
+		{
+			bruteDamage = values.bruteDmg;
+			burnDamage = values.burnDmg;
+			isBleeding = values.bleeding;
+			isMangled = values.mangled;
+			isDismembered = values.dismembered;
+			CalculateOverall();
+		}
+
+		private BodyPartValues GetCurrentValues()
+		{
+			var values = new BodyPartValues
+			{
+				bruteDmg = bruteDamage,
+				burnDmg = burnDamage,
+				bleeding = isBleeding,
+				mangled = isMangled,
+				dismembered = isDismembered
+			};
+
+			return values;
 		}
 
 		public virtual void ReceiveDamage(DamageType damageType, float damage)
@@ -92,7 +113,7 @@ namespace Health
 				CheckMangled();
 			}
 
-			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )//TODO this is for testing
+			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )
 			{
 				CheckDismember();
 			}
@@ -141,18 +162,18 @@ namespace Health
 			}
 		}
 
-		private void CheckDismember()
+		private void CheckDismember(bool force = false)
 		{
-			if (!DMMath.Prob(bodyPartData.dismemberChance))
+			if (!force && !DMMath.Prob(bodyPartData.dismemberChance))
 			{
 				return;
 			}
 
 			//Drop limb
 			var limb = Spawn.ServerPrefab(bodyPartData.limbGameObject, gameObject.RegisterTile().WorldPositionServer);
-			limb.GameObject.GetComponentInChildren<SpriteHandler>().gameObject.SetActive(true);
+			limb.GameObject.GetComponent<BodyPart>().SetValuesInit(GetCurrentValues());
 
-			bodyPartData = dismemberData;
+			//TODO change sprite for dismembered sprite!
 			isDismembered = true;
 			BodyPartChanged?.Invoke(bodyPartData);
 			DismemberStateChanged?.Invoke(this, isDismembered);
@@ -194,7 +215,7 @@ namespace Health
 			}
 
 			bodyPartData = bodyPart;
-			Init();
+			CleanInit();
 			BodyPartChanged?.Invoke(bodyPart);
 		}
 
@@ -243,5 +264,14 @@ namespace Health
 			burnDamage = burn;
 			UpdateSeverity();
 		}
+	}
+
+	public class BodyPartValues
+	{
+		public float bruteDmg;
+		public float burnDmg;
+		public bool bleeding;
+		public bool mangled;
+		public bool dismembered;
 	}
 }
