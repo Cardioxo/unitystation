@@ -48,42 +48,62 @@ namespace Health
 		[Tooltip("List of organs this limb contains")]
 		public List<string> organs; //TODO make organs data to fill this
 
-		[BoxGroup("In game stuff")] [Tooltip("What does this body part look like in the mob's body")]
+		[BoxGroup("In game stuff")]
+		[Tooltip("What does this body part look like in the mob's body")]
 		public SpriteSheetAndData mobSprite;
-		[ShowIf(nameof(sexualDimorphism))][BoxGroup("In game stuff")] [Tooltip("Sprites for girls")]
+
+		[ShowIf(nameof(sexualDimorphism))]
+		[BoxGroup("In game stuff")]
+		[Tooltip("Sprites for girls")]
 		public SpriteSheetAndData mobSpriteFemale = null;
-		[BoxGroup("In game stuff")] [Tooltip("In game stuff representation of this limb")]
+
+		[ShowIf(nameof(canBeDismembered))]
+		[BoxGroup("In game stuff")]
+		[Tooltip("How does this limb look when dismembered")]
+		public SpriteSheetAndData dismemberedSprite = null;
+
+		[BoxGroup("In game stuff")]
+		[Tooltip("In game stuff representation of this limb")]
 		public GameObject limbGameObject;
-		[BoxGroup("In game stuff")] [Tooltip("A list of all possible damage sprite ordered from less to more damaged")]
+		[BoxGroup("In game stuff")]
+		[Tooltip("A list of all possible damage sprite ordered from less to more damaged")]
 		public List<SpriteSheetAndData> damageOverlay = null;
-		[ShowIf(nameof(canBeMangled))] [BoxGroup("In game stuff")] [Tooltip("How this limb looks mangled")]
+
+		[ShowIf(nameof(canBeMangled))]
+		[BoxGroup("In game stuff")]
+		[Tooltip("How this limb looks mangled")]
 		public SpriteSheetAndData mangledSprite = null;
-		[ShowIf(nameof(isHead))] [BoxGroup("In game stuff")] [Tooltip("Special damage sprites for heads!")]
+
+		[ShowIf(nameof(IsHead))]
+		[BoxGroup("In game stuff")] [Tooltip("Special damage sprites for heads!")]
 		public SpriteSheetAndData debrained = null;
-		[ShowIf(nameof(isHead))] [BoxGroup("In game stuff")] [Tooltip("Special damage sprites for heads!")]
+
+		[ShowIf(nameof(IsHead))]
+		[BoxGroup("In game stuff")] [Tooltip("Special damage sprites for heads!")]
 		public SpriteSheetAndData missingEyes = null;
 
+
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for blue state")]
-		public Sprite blueDamageMonitorIcon;
+		public Sprite blueDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for green state")]
-		public Sprite greenDamageMonitorIcon;
+		public Sprite greenDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for yellow state")]
-		public Sprite yellowDamageMonitorIcon;
+		public Sprite yellowDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for orange state")]
-		public Sprite orangeDamageMonitorIcon;
+		public Sprite orangeDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for dark orange state")]
-		public Sprite darkOrangeDamageMonitorIcon;
+		public Sprite darkOrangeDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for red state")]
-		public Sprite redDamageMonitorIcon;
+		public Sprite redDamageMonitorIcon = null;
 
 		[BoxGroup("Health monitor state")] [Tooltip("Sprite for gray state")]
-		public Sprite grayDamageMonitorIcon;
+		public Sprite grayDamageMonitorIcon = null;
 
-		private bool isHead => bodyPartType == BodyPartType.Head;
+		private bool IsHead => bodyPartType == BodyPartType.Head;
 	}
 }
