@@ -70,6 +70,94 @@ namespace Health
 		public bool allowKnifeHarvest; //TODO eliminate this, use harvesteable component instead
 		#endregion
 
+		#region Init Methods
+		public virtual void Awake()
+		{
+			EnsureInit();
+		}
+
+		void OnEnable()
+		{
+			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
+		}
+
+		void OnDisable()
+		{
+			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
+		}
+
+		public override void OnStartServer()
+		{
+			EnsureInit();
+			mobID = PlayerManager.Instance.GetMobID();
+			ResetBodyParts();
+			if (maxHealth <= 0)
+			{
+				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
+				maxHealth = 1;
+			}
+		}
+
+		public override void OnStartClient()
+		{
+			EnsureInit();
+			StartCoroutine(WaitForClientLoad());
+		}
+
+		public void OnSpawnServer(SpawnInfo info)
+		{
+			ConsciousState = ConsciousState.CONSCIOUS;
+			OverallHealth = maxHealth;
+			ResetBodyParts();
+			CalculateOverallHealth();
+		}
+
+		private void EnsureInit()
+		{
+			if (registerTile != null)
+			{
+				return;
+			}
+
+			registerTile = GetComponent<RegisterTile>();
+			SubscribeInternalEvents();
+			InitSubsystems();
+		}
+
+		private void SubscribeInternalEvents()
+		{
+			OnDeathNotifyEvent += OnDeath;
+			ApplyDamageEvent += OnDamageReceived;
+
+			foreach (var bodyPart in bodyParts)
+			{
+				bodyPart.BleedingStateChanged += OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged += OnDismemberStateChanged;
+				bodyPart.MangledStateChanged += OnMangledStateChanged;
+			}
+
+			//TODO subscribe to subsystems (respiratory, blood, brain) events
+		}
+
+		private void UnsubscribeAll()
+		{
+			ApplyDamageEvent -= OnDamageReceived;
+
+			foreach (var bodyPart in bodyParts)
+			{
+				bodyPart.BleedingStateChanged -= OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged -= OnDismemberStateChanged;
+				bodyPart.MangledStateChanged -= OnMangledStateChanged;
+			}
+
+			//TODO unsubscribe subsystems (respiratory, blood, brain) events
+
+
+			OnDeathNotifyEvent -= OnDeath;
+		}
+
+		#endregion
+
 		#region Public getters/setters
 		/// <summary>
 		/// Server side, each mob has a different one and never it never changes
@@ -121,8 +209,6 @@ namespace Health
 		/// How on fire we are. Exists client side - synced with server.
 		/// </summary>
 		public float FireStacks => fireStacks;
-
-
 		#endregion
 
 		#region Events declaration
@@ -169,69 +255,6 @@ namespace Health
 		private float tick = 0;
 		private RegisterTile registerTile;
 		private ConsciousState consciousState;
-		#endregion
-
-		#region Init Methods
-		public virtual void Awake()
-		{
-			EnsureInit();
-
-		}
-
-		void OnEnable()
-		{
-			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
-		}
-
-		void OnDisable()
-		{
-			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
-		}
-
-		private void EnsureInit()
-		{
-			if (registerTile != null)
-			{
-				return;
-			}
-
-			registerTile = GetComponent<RegisterTile>();
-			SubscribeInternalEvents();
-			InitSubsystems();
-		}
-
-		private void SubscribeInternalEvents()
-		{
-			OnDeathNotifyEvent += OnDeath;
-			ApplyDamageEvent += OnDamageReceived;
-
-			foreach (var bodyPart in bodyParts)
-			{
-				bodyPart.BleedingStateChanged += OnBleedingStateChanged;
-				bodyPart.DismemberStateChanged += OnDismemberStateChanged;
-				bodyPart.MangledStateChanged += OnMangledStateChanged;
-			}
-
-			//TODO subscribe to subsystems (respiratory, blood, brain) events
-		}
-
-		private void UnsubscribeAll()
-		{
-			ApplyDamageEvent -= OnDamageReceived;
-
-			foreach (var bodyPart in bodyParts)
-			{
-				bodyPart.BleedingStateChanged -= OnBleedingStateChanged;
-				bodyPart.DismemberStateChanged -= OnDismemberStateChanged;
-				bodyPart.MangledStateChanged -= OnMangledStateChanged;
-			}
-
-			//TODO unsubscribe subsystems (respiratory, blood, brain) events
-
-
-			OnDeathNotifyEvent -= OnDeath;
-		}
-
 		#endregion
 
 		// This is the DNA SyncVar hook
@@ -810,25 +833,6 @@ namespace Health
 		#endregion
 
 		#region Event methods
-
-		public override void OnStartServer()
-		{
-			EnsureInit();
-			mobID = PlayerManager.Instance.GetMobID();
-			ResetBodyParts();
-			if (maxHealth <= 0)
-			{
-				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
-				maxHealth = 1;
-			}
-		}
-
-		public override void OnStartClient()
-		{
-			EnsureInit();
-			StartCoroutine(WaitForClientLoad());
-		}
-
 		IEnumerator WaitForClientLoad()
 		{
 			//wait for DNA:
@@ -846,14 +850,6 @@ namespace Health
 			Profiler.BeginSample("PlayerExpose");
 			ApplyDamage(null, 1, AttackType.Fire, DamageType.Burn);
 			Profiler.EndSample();
-		}
-
-		public void OnSpawnServer(SpawnInfo info)
-		{
-			ConsciousState = ConsciousState.CONSCIOUS;
-			OverallHealth = maxHealth;
-			ResetBodyParts();
-			CalculateOverallHealth();
 		}
 
 		protected virtual void OnDeath()
