@@ -70,7 +70,6 @@ namespace Health
 
         public void ServerPerformInteraction(HandApply interaction)
         {
-            //TODO: Finish logic here
             //If drape in hand, show surgery UI
             if (interaction.HandObject.GetComponent<SurgeryTool>().SurgeryToolProperties[0].ToolType !=
                 SurgeryToolType.Drapes)
@@ -83,16 +82,31 @@ namespace Health
             {
                 void ProgressFinishAction()
                 {
-                    //Roll for failure
-
-                    //If failure, do activeSurgery.perform
-                    activeSurgeries.Remove(interaction.TargetBodyPart);
+                    if (RollSuccess())
+                    {
+                        activeSurgeries[interaction.TargetBodyPart].PerformInteractionSuccess(interaction); 
+                    }
+                    else
+                    {
+                        activeSurgeries[interaction.TargetBodyPart].PerformInteractionFailure(interaction); 
+                    }
                 }
 
                 var bar = StandardProgressAction.Create(ProgressConfig, ProgressFinishAction)
                     .ServerStartProgress(registerTile, 10, interaction.Performer);
             }
 
+        }
+
+        /// <summary>
+        /// Rolls the success of the surgery step depending on the circumstances. How efficient is the tool used?
+        /// Is the surgery done on the floor or on a table? Etc.
+        /// </summary>
+        /// <returns></returns>
+        private bool RollSuccess()
+        {
+            //TODO implement the roll
+            return true;
         }
     }
 }
