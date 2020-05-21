@@ -95,7 +95,7 @@ public class BodyPartBehaviour : MonoBehaviour
 	protected bool IsLocalPlayer()
 	{
 		//kinda crappy way to determine local player,
-		//but otherwise UpdateIcons would have to be moved to HumanHealthBehaviour
+		//but otherwise Icons would have to be moved to HumanHealthBehaviour
 		return PlayerManager.LocalPlayerScript == gameObject.GetComponentInParent<PlayerScript>();
 	}
 

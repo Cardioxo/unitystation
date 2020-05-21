@@ -1,0 +1,444 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RightArmPreset
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: a641183eb51e47eaa4bf9c2552167cc8,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: bodyPartType
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: sexualDimorphism
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: maxDamage
+    value: 200
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: canBeMangled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: mangledThreshold
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Melee
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Bullet
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Laser
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Energy
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Bomb
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Rad
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Fire
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Acid
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Magic
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: armor.Bio
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: canBeDismembered
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: dismemberThreshold
+    value: 30
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: dismemberChance
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: canBleed
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: bleedThreshold
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: containOrgans
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: organs.Array.size
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: organs.Array.data[0]
+    value: lungs
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: organs.Array.data[1]
+    value: heart
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: organs.Array.data[2]
+    value: stomach
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: b96d50be151356348854bdcff2a80449, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: b96d50be151356348854bdcff2a80449, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: b96d50be151356348854bdcff2a80449, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: b96d50be151356348854bdcff2a80449, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: b96d50be151356348854bdcff2a80449, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSprite.EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 7846bb4596af74e4b971ad1e6f1e56a9, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: e3dd6ed17364f514d8c9e6f2a2fb789d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: e3dd6ed17364f514d8c9e6f2a2fb789d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: e3dd6ed17364f514d8c9e6f2a2fb789d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: e3dd6ed17364f514d8c9e6f2a2fb789d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: e3dd6ed17364f514d8c9e6f2a2fb789d, type: 3}
+  - target: {fileID: 0}
+    propertyPath: mobSpriteFemale.EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: e39a9694a6a602a42bb8f4f37bdf4b4f, type: 3}
+  - target: {fileID: 0}
+    propertyPath: limbGameObject
+    value: 
+    objectReference: {fileID: 630176947808807219, guid: e0a2c58b355a5664eb2812d3cbf805c1,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.size
+    value: 6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: 4c6787d99ba19e74d9edbda34f71912c, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: 4c6787d99ba19e74d9edbda34f71912c, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: 4c6787d99ba19e74d9edbda34f71912c, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: 4c6787d99ba19e74d9edbda34f71912c, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: 4c6787d99ba19e74d9edbda34f71912c, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[0].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 4517aaf2b47c5b04996ecf3711ae3443, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: 2ddce54ef2062b04b9e2ca97f224a631, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: 2ddce54ef2062b04b9e2ca97f224a631, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: 2ddce54ef2062b04b9e2ca97f224a631, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: 2ddce54ef2062b04b9e2ca97f224a631, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: 2ddce54ef2062b04b9e2ca97f224a631, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[1].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 87b6822d58730584a8debea99ee50e27, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: 9d1feb8a149b6e048b829409da5245a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: 9d1feb8a149b6e048b829409da5245a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: 9d1feb8a149b6e048b829409da5245a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: 9d1feb8a149b6e048b829409da5245a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: 9d1feb8a149b6e048b829409da5245a0, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[2].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: d83dd14af8195384da556a0f1d20c18e, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: d8a6a217281d60141af3b6ef2dc2f3d6, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: d8a6a217281d60141af3b6ef2dc2f3d6, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: d8a6a217281d60141af3b6ef2dc2f3d6, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: d8a6a217281d60141af3b6ef2dc2f3d6, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: d8a6a217281d60141af3b6ef2dc2f3d6, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[3].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: d3117958d32d0d94bbc6f4ba5372166b, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: fe321c7ae90cb034589bf24daf93b450, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: fe321c7ae90cb034589bf24daf93b450, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: fe321c7ae90cb034589bf24daf93b450, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: fe321c7ae90cb034589bf24daf93b450, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: fe321c7ae90cb034589bf24daf93b450, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[4].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 1146be4552c661245b71c56d7b8d9974, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: 5dde937ea96023149a4b68e4f44c4659, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: 5dde937ea96023149a4b68e4f44c4659, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: 5dde937ea96023149a4b68e4f44c4659, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: 5dde937ea96023149a4b68e4f44c4659, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: 5dde937ea96023149a4b68e4f44c4659, type: 3}
+  - target: {fileID: 0}
+    propertyPath: damageOverlay.Array.data[5].EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 043b6379133a94640b48faa53e727e84, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: debrained.Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: ad7e7d72b80bed84ebb56db3116280fd, type: 3}
+  - target: {fileID: 0}
+    propertyPath: debrained.EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 0bdc3b4b5d1b4fd47860ccd14e99e1e4, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Texture
+    value: 
+    objectReference: {fileID: 2800000, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Sprites.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Sprites.Array.data[0]
+    value: 
+    objectReference: {fileID: 21300000, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Sprites.Array.data[1]
+    value: 
+    objectReference: {fileID: 21300002, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Sprites.Array.data[2]
+    value: 
+    objectReference: {fileID: 21300004, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.Sprites.Array.data[3]
+    value: 
+    objectReference: {fileID: 21300006, guid: ae82dfe114430e047b1eec5c4fa5ffcf, type: 3}
+  - target: {fileID: 0}
+    propertyPath: missingEyes.EquippedData
+    value: 
+    objectReference: {fileID: 4900000, guid: 11cd45adaf87c224b9227d3df966a92b, type: 3}
+  - target: {fileID: 0}
+    propertyPath: blueDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 100a51edd335e5e4786dabc4059c4ac8, type: 3}
+  - target: {fileID: 0}
+    propertyPath: greenDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 100a51edd335e5e4786dabc4059c4ac8, type: 3}
+  - target: {fileID: 0}
+    propertyPath: yellowDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 9e9a8aa269bdb8d46ba8344c29c76af2, type: 3}
+  - target: {fileID: 0}
+    propertyPath: orangeDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 6bd15fbeb32b3f44faee8be4c54b2c44, type: 3}
+  - target: {fileID: 0}
+    propertyPath: darkOrangeDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: 067dbe567f3ca5846acef2609fa11387, type: 3}
+  - target: {fileID: 0}
+    propertyPath: redDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: ec5ba299d88e3504fb43048729faa87b, type: 3}
+  - target: {fileID: 0}
+    propertyPath: grayDamageMonitorIcon
+    value: 
+    objectReference: {fileID: 21300000, guid: ec5ba299d88e3504fb43048729faa87b, type: 3}

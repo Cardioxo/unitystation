@@ -1,4 +1,5 @@
 ﻿using System;
+using Health;
 using Mirror;
 using UnityEngine;
 
@@ -13,45 +14,71 @@ namespace Health
 		[Tooltip("Scriptable object that contains this body part relevant data")]
 		public BodyPartData bodyPartData = null;
 
-		[SerializeField] [Tooltip("Body part data to load when this member has been dismembered")]
-		private BodyPartData dismemberData = null;
-
-		private float overallDamage = 0;
+		private float overallHealth = 0;
 		private DamageSeverity damageSeverity = DamageSeverity.None;
-		private bool isBleeding = false;
 		private float bruteDamage = 0;
 		private float burnDamage = 0;
+		private bool isBleeding = false;
 		private bool isMangled = false;
 		private bool isDismembered = false;
 
-		public float OverallDamage => overallDamage;
+		public float OverallHealth => overallHealth;
+		public float OverallHealthPercentage => (overallHealth / bodyPartData.maxDamage) * 100;
+		public float OverallDamage => bodyPartData.maxDamage - overallHealth;
+		public float OverallDamagePercentage => (100 - OverallHealthPercentage);
 		public DamageSeverity DamageSeverity => damageSeverity;
 		public bool IsBleeding => isBleeding;
 		public float BruteDamage => bruteDamage;
 		public float BurnDamage => burnDamage;
 		public bool IsMangled => isMangled;
 		public bool IsDismembered => isDismembered;
+		public Armor Armor { get; set; } = new Armor();
 
 		public event Action<BodyPart, bool> MangledStateChanged;
 		public event Action<BodyPart, bool> BleedingStateChanged;
 		public event Action<BodyPart, bool> DismemberStateChanged;
 		public event Action<BodyPartData> BodyPartChanged;
 
-		public override void OnStartServer()
+		private void OnEnable()
 		{
-			Init();
+			CleanInit();
 		}
 
-		private void Init()
+		private void CleanInit()
 		{
-			overallDamage = bodyPartData.maxDamage;
-			isBleeding = false;
 			bruteDamage = 0;
 			burnDamage = 0;
+			isBleeding = false;
 			isMangled = false;
 			isDismembered = false;
+			Armor += bodyPartData.NaturalArmor;
+			overallHealth = bodyPartData.maxDamage;
 
 			//TODO call update for sprites!
+		}
+
+		public void SetValuesInit(BodyPartValues values)
+		{
+			bruteDamage = values.bruteDmg;
+			burnDamage = values.burnDmg;
+			isBleeding = values.bleeding;
+			isMangled = values.mangled;
+			isDismembered = values.dismembered;
+			CalculateOverall();
+		}
+
+		private BodyPartValues GetCurrentValues()
+		{
+			var values = new BodyPartValues
+			{
+				bruteDmg = bruteDamage,
+				burnDmg = burnDamage,
+				bleeding = isBleeding,
+				mangled = isMangled,
+				dismembered = isDismembered
+			};
+
+			return values;
 		}
 
 		public virtual void ReceiveDamage(DamageType damageType, float damage)
@@ -74,15 +101,26 @@ namespace Health
 					break;
 			}
 
-			if (damage >= bodyPartData.dismemberThreshold)
+			CalculateOverall();
+
+			if (bodyPartData.canBleed)
+			{
+				CheckBleeding();
+			}
+
+			if (bodyPartData.canBeMangled)
+			{
+				CheckMangled();
+			}
+
+			if (bodyPartData.canBeDismembered && damage >= bodyPartData.dismemberThreshold )
 			{
 				CheckDismember();
 			}
 
-			CheckBleeding();
-			CheckMangled();
 			UpdateSeverity();
 		}
+
 
 		public virtual void HealDamage(float damage, DamageType type)
 		{
@@ -96,37 +134,46 @@ namespace Health
 					burnDamage -= damage;
 					break;
 			}
+
+			CalculateOverall();
 			CheckBleeding();
 			CheckMangled();
 			UpdateSeverity();
 		}
 
+		private void CalculateOverall()
+		{
+			overallHealth -= (bruteDamage + burnDamage);
+		}
+
 		private void UpdateSeverity()
 		{
 			// update UI limbs depending on their severity of damage
-			float severity = (float) (overallDamage / bodyPartData.maxDamage) * 100;
-			foreach (DamageSeverity _severity in Enum.GetValues(typeof(DamageSeverity)))
+			float severity = OverallDamagePercentage;
+			foreach (DamageSeverity value in Enum.GetValues(typeof(DamageSeverity)))
 			{
-				if (severity >= (int) _severity)
+				if (severity >= (int) value)
 				{
 					continue;
 				}
 
-				damageSeverity = _severity;
+				damageSeverity = value;
 				break;
 			}
 		}
 
-		private void CheckDismember()
+		private void CheckDismember(bool force = false)
 		{
-			if (!DMMath.Prob(bodyPartData.dismemberChance))
+			if (!force && !DMMath.Prob(bodyPartData.dismemberChance))
 			{
 				return;
 			}
 
 			//Drop limb
-			Spawn.ServerPrefab(bodyPartData.inGameLimb, gameObject.RegisterTile().WorldPositionServer);
-			bodyPartData = dismemberData;
+			var limb = Spawn.ServerPrefab(bodyPartData.limbGameObject, gameObject.RegisterTile().WorldPositionServer);
+			limb.GameObject.GetComponent<BodyPart>().SetValuesInit(GetCurrentValues());
+
+			//TODO change sprite for dismembered sprite!
 			isDismembered = true;
 			BodyPartChanged?.Invoke(bodyPartData);
 			DismemberStateChanged?.Invoke(this, isDismembered);
@@ -134,7 +181,7 @@ namespace Health
 
 		private void CheckMangled()
 		{
-			bool newMangled = overallDamage < bodyPartData.mangledThreshold;
+			bool newMangled = OverallHealthPercentage >= bodyPartData.mangledThreshold;
 
 			if (isMangled == newMangled)
 			{
@@ -147,7 +194,7 @@ namespace Health
 
 		private void CheckBleeding()
 		{
-			bool newBleeding = bruteDamage < 20;
+			bool newBleeding = ((bruteDamage / bodyPartData.maxDamage) * 100) >= bodyPartData.bleedThreshold;
 
 			if (isBleeding == newBleeding)
 			{
@@ -168,7 +215,7 @@ namespace Health
 			}
 
 			bodyPartData = bodyPart;
-			Init();
+			CleanInit();
 			BodyPartChanged?.Invoke(bodyPart);
 		}
 
@@ -179,7 +226,7 @@ namespace Health
 			HealDamage(burnDamage, DamageType.Burn);
 		}
 
-		public float GetDamageValue(DamageType damageType)//TODO this looks like unnecessary. Find usages on old class and purge
+		public float GetDamageValue(DamageType damageType)
 		{
 			switch (damageType)
 			{
@@ -210,5 +257,21 @@ namespace Health
 			// Maybe we should move updating icons to HealthSystem
 			return PlayerManager.LocalPlayerScript == gameObject.GetComponentInParent<PlayerScript>();
 		}
+
+		public void UpdateClientBodyPartStat(float brute, float burn)
+		{
+			bruteDamage = brute;
+			burnDamage = burn;
+			UpdateSeverity();
+		}
+	}
+
+	public class BodyPartValues
+	{
+		public float bruteDmg;
+		public float burnDmg;
+		public bool bleeding;
+		public bool mangled;
+		public bool dismembered;
 	}
 }

@@ -70,6 +70,94 @@ namespace Health
 		public bool allowKnifeHarvest; //TODO eliminate this, use harvesteable component instead
 		#endregion
 
+		#region Init Methods
+		public virtual void Awake()
+		{
+			EnsureInit();
+		}
+
+		void OnEnable()
+		{
+			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
+		}
+
+		void OnDisable()
+		{
+			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
+		}
+
+		public override void OnStartServer()
+		{
+			EnsureInit();
+			mobID = PlayerManager.Instance.GetMobID();
+			ResetBodyParts();
+			if (maxHealth <= 0)
+			{
+				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
+				maxHealth = 1;
+			}
+		}
+
+		public override void OnStartClient()
+		{
+			EnsureInit();
+			StartCoroutine(WaitForClientLoad());
+		}
+
+		public void OnSpawnServer(SpawnInfo info)
+		{
+			ConsciousState = ConsciousState.CONSCIOUS;
+			OverallHealth = maxHealth;
+			ResetBodyParts();
+			CalculateOverallHealth();
+		}
+
+		private void EnsureInit()
+		{
+			if (registerTile != null)
+			{
+				return;
+			}
+
+			registerTile = GetComponent<RegisterTile>();
+			SubscribeInternalEvents();
+			InitSubsystems();
+		}
+
+		private void SubscribeInternalEvents()
+		{
+			OnDeathNotifyEvent += OnDeath;
+			ApplyDamageEvent += OnDamageReceived;
+
+			foreach (var bodyPart in bodyParts)
+			{
+				bodyPart.BleedingStateChanged += OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged += OnDismemberStateChanged;
+				bodyPart.MangledStateChanged += OnMangledStateChanged;
+			}
+
+			//TODO subscribe to subsystems (respiratory, blood, brain) events
+		}
+
+		private void UnsubscribeAll()
+		{
+			ApplyDamageEvent -= OnDamageReceived;
+
+			foreach (var bodyPart in bodyParts)
+			{
+				bodyPart.BleedingStateChanged -= OnBleedingStateChanged;
+				bodyPart.DismemberStateChanged -= OnDismemberStateChanged;
+				bodyPart.MangledStateChanged -= OnMangledStateChanged;
+			}
+
+			//TODO unsubscribe subsystems (respiratory, blood, brain) events
+
+
+			OnDeathNotifyEvent -= OnDeath;
+		}
+
+		#endregion
+
 		#region Public getters/setters
 		/// <summary>
 		/// Server side, each mob has a different one and never it never changes
@@ -121,8 +209,6 @@ namespace Health
 		/// How on fire we are. Exists client side - synced with server.
 		/// </summary>
 		public float FireStacks => fireStacks;
-
-
 		#endregion
 
 		#region Events declaration
@@ -169,69 +255,6 @@ namespace Health
 		private float tick = 0;
 		private RegisterTile registerTile;
 		private ConsciousState consciousState;
-		#endregion
-
-		#region Init Methods
-		public virtual void Awake()
-		{
-			EnsureInit();
-
-		}
-
-		void OnEnable()
-		{
-			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
-		}
-
-		void OnDisable()
-		{
-			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
-		}
-
-		private void EnsureInit()
-		{
-			if (registerTile != null)
-			{
-				return;
-			}
-
-			registerTile = GetComponent<RegisterTile>();
-			SubscribeInternalEvents();
-			InitSubsystems();
-		}
-
-		private void SubscribeInternalEvents()
-		{
-			OnDeathNotifyEvent += OnDeath;
-			ApplyDamageEvent += OnDamageReceived;
-
-			foreach (var bodyPart in bodyParts)
-			{
-				bodyPart.BleedingStateChanged += OnBleedingStateChanged;
-				bodyPart.DismemberStateChanged += OnDismemberStateChanged;
-				bodyPart.MangledStateChanged += OnMangledStateChanged;
-			}
-
-			//TODO subscribe to subsystems (respiratory, blood, brain) events
-		}
-
-		private void UnsubscribeAll()
-		{
-			ApplyDamageEvent -= OnDamageReceived;
-
-			foreach (var bodyPart in bodyParts)
-			{
-				bodyPart.BleedingStateChanged -= OnBleedingStateChanged;
-				bodyPart.DismemberStateChanged -= OnDismemberStateChanged;
-				bodyPart.MangledStateChanged -= OnMangledStateChanged;
-			}
-
-			//TODO unsubscribe subsystems (respiratory, blood, brain) events
-
-
-			OnDeathNotifyEvent -= OnDeath;
-		}
-
 		#endregion
 
 		// This is the DNA SyncVar hook
@@ -305,7 +328,7 @@ namespace Health
 
 			LastDamageType = damageType;
 			LastDamagedBy = damagedBy;
-			bodyPart.ReceiveDamage(damageType, bodyPart.bodyPartData.armor.GetDamage(damage, attackType));
+			bodyPart.ReceiveDamage(damageType, bodyPart.Armor.GetDamage(damage, attackType));
 			HealthBodyPartMessage.Send(
 				gameObject,
 				gameObject,
@@ -485,14 +508,10 @@ namespace Health
 			{
 				return bodyParts[searchIndex];
 			}
-			//If nothing is found then try to find a chest component:
-			searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
-			if (searchIndex != -1)
-			{
-				return bodyParts[searchIndex];
-			}
+			//If nothing is found then try to find a chest component
 			// else nothing:
-			return null;
+			searchIndex = bodyParts.FindIndex(x => x.bodyPartData.bodyPartType == BodyPartType.Chest);
+			return searchIndex != -1 ? bodyParts[searchIndex] : null;
 		}
 
 		/// <summary>
@@ -508,33 +527,38 @@ namespace Health
 		}
 
 		#region Update loop
-		//TODO take everything you can't outside the update loop
+		//TODO take everything you can outside the update loop
 
 		//Handled via UpdateManager
 		protected virtual void UpdateMe()
 		{
 			//Server Only:
-			if (isServer && !IsDead)
+			if (!isServer || IsDead)
 			{
-				tick += Time.deltaTime;
-				if (tick > tickRate)
-				{
-					tick = 0f;
-					if (fireStacks > 0)
-					{
-						HandleFireDamage();
-					}
-					//TODO stop calculation every tick, calculate only when health changed
-					CalculateOverallHealth();
-					CheckHealthAndUpdateConsciousState();
-				}
+				return;
 			}
+
+			tick += Time.deltaTime;
+			if (tick < tickRate)
+			{
+				return;
+			}
+
+			tick = 0f;
+			if (fireStacks > 0)
+			{
+				HandleFireDamage();
+			}
+
+			//TODO stop calculation every tick, calculate only when health changed
+			// CalculateOverallHealth();
+			// CheckHealthAndUpdateConsciousState();
 		}
 
 		protected void HandleFireDamage()
 		{
 			//TODO: Burn clothes (see species.dm handle_fire)
-			ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Internal, DamageType.Burn);
+			ApplyDamageToBodypart(null, fireStacks * DAMAGE_PER_FIRE_STACK, AttackType.Fire, DamageType.Burn);
 			//gradually deplete fire stacks
 			SyncFireStacks(fireStacks, fireStacks - 0.1f);
 			//instantly stop burning if there's no oxygen at this location
@@ -581,13 +605,12 @@ namespace Health
 			OverallHealth = newHealth;
 		}
 
-		public float CalculateOverallBodyPartDamage()
+		protected float CalculateOverallBodyPartDamage()
 		{
 			float bodyPartDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				bodyPartDmg += bodyParts[i].BruteDamage;
-				bodyPartDmg += bodyParts[i].BurnDamage;
+				bodyPartDmg += part.OverallDamage;
 			}
 			return bodyPartDmg;
 		}
@@ -595,9 +618,9 @@ namespace Health
 		public float GetTotalBruteDamage()
 		{
 			float bruteDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				bruteDmg += bodyParts[i].BruteDamage;
+				bruteDmg += part.BruteDamage;
 			}
 			return bruteDmg;
 		}
@@ -605,9 +628,9 @@ namespace Health
 		public float GetTotalBurnDamage()
 		{
 			float burnDmg = 0;
-			for (int i = 0; i < bodyParts.Count; i++)
+			foreach (var part in bodyParts)
 			{
-				burnDmg += bodyParts[i].BurnDamage;
+				burnDmg += part.BurnDamage;
 			}
 			return burnDmg;
 		}
@@ -641,10 +664,10 @@ namespace Health
 			{
 				return;
 			}
+
 			OnDeathNotifyEvent?.Invoke();
 			afterDeathDamage = 0;
 			ConsciousState = ConsciousState.DEAD;
-			OnDeathActions();
 			bloodSystem.StopBleedingAll();
 			//stop burning
 			//TODO: When clothes/limb burning is implemented, probably should keep burning until clothes are burned up
@@ -679,35 +702,49 @@ namespace Health
 		/// </summary>
 		protected virtual void CheckHealthAndUpdateConsciousState()
 		{
-			if (ConsciousState != ConsciousState.CONSCIOUS && bloodSystem.OxygenDamage < OxygenPassOut && OverallHealth > SoftCritThreshold)
+			if (ShouldBeDead())
 			{
-				Logger.LogFormat( "{0}, back on your feet!", Category.Health, gameObject.name );
-				Uncrit();
+				Death();
 				return;
 			}
 
-			if (OverallHealth <= SoftCritThreshold || bloodSystem.OxygenDamage > OxygenPassOut)
+			if (ShouldBeUnconscious())
 			{
-				if (OverallHealth <= CritThreshold)
-				{
-					Crit(false);
-				}else{
-					Crit(true); //health isn't low enough for crit, but might be low enough for soft crit or passed out from lack of oxygen
-				}
+				Crit(!(OverallHealth <= CritThreshold));
+				Logger.LogFormat(
+					"{0} is in {1}",
+					Category.Health,
+					gameObject.name,
+					OverallHealth <= CritThreshold ? "softcrit" : "crit");
+				return;
 			}
-			if (NotSuitableForDeath())
+
+			if (!ShouldBeConscious())
 			{
 				return;
 			}
-			Death();
+
+			Logger.LogFormat( "{0}, back on your feet!", Category.Health, gameObject.name );
+			Uncrit();
+			return;
 		}
 
-		private bool NotSuitableForDeath()
+		private bool ShouldBeConscious()
 		{
-			return OverallHealth > DeadThreshold || IsDead;
+			return ConsciousState != ConsciousState.CONSCIOUS
+			       && bloodSystem.OxygenDamage < OxygenPassOut
+			       && OverallHealth >= SoftCritThreshold;
 		}
 
-		protected abstract void OnDeathActions();
+		private bool ShouldBeUnconscious()
+		{
+			return  OverallHealth <= SoftCritThreshold || bloodSystem.OxygenDamage > OxygenPassOut;
+		}
+
+		private bool ShouldBeDead()
+		{
+			return OverallHealth < DeadThreshold && !IsDead;
+		}
 
 		protected void RaiseDeathNotifyEvent()
 		{
@@ -779,35 +816,23 @@ namespace Health
 		public void UpdateClientBodyPartStats(BodyPartType bodyPartType, float bruteDamage, float burnDamage)
 		{
 			var bodyPart = FindBodyPart(bodyPartType);
-			if (bodyPart != null)
+			if (bodyPart == null)
 			{
-				//	Logger.Log($"Update stats for {gameObject.name} body part {bodyPartType.ToString()} BruteDmg: {bruteDamage} BurnDamage: {burnDamage}", Category.Health);
-
-				// bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
+				return;
 			}
+
+			Logger.Log(
+				$"Update stats for {gameObject.name}" +
+				$" body part {bodyPartType.ToString()}" +
+				$" BruteDmg: {bruteDamage} " +
+				$" BurnDamage: {burnDamage}",
+				Category.Health);
+
+			bodyPart.UpdateClientBodyPartStat(bruteDamage, burnDamage);
 		}
 		#endregion
 
 		#region Event methods
-
-		public override void OnStartServer()
-		{
-			EnsureInit();
-			mobID = PlayerManager.Instance.GetMobID();
-			ResetBodyParts();
-			if (maxHealth <= 0)
-			{
-				Logger.LogWarning($"Max health ({maxHealth}) set to zero/below zero!", Category.Health);
-				maxHealth = 1;
-			}
-		}
-
-		public override void OnStartClient()
-		{
-			EnsureInit();
-			StartCoroutine(WaitForClientLoad());
-		}
-
 		IEnumerator WaitForClientLoad()
 		{
 			//wait for DNA:
@@ -827,14 +852,6 @@ namespace Health
 			Profiler.EndSample();
 		}
 
-		public void OnSpawnServer(SpawnInfo info)
-		{
-			ConsciousState = ConsciousState.CONSCIOUS;
-			OverallHealth = maxHealth;
-			ResetBodyParts();
-			CalculateOverallHealth();
-		}
-
 		protected virtual void OnDeath()
 		{
 			UnsubscribeAll();
@@ -843,26 +860,27 @@ namespace Health
 
 		protected virtual void OnDamageReceived(GameObject damagedBy)
 		{
-			//TODO do health calculations here.
+			CalculateOverallHealth();
 			//TODO update clients UI from here.
-			//TODO determine if lives or die from here
+			CheckHealthAndUpdateConsciousState();
 
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		protected virtual void OnBleedingStateChanged(BodyPart bodyPart, bool isBleeding)
 		{
-			throw new NotImplementedException();
+			//TODO start or stop blood loss in blood system from here
+			// throw new NotImplementedException();
 		}
 
-		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isMangled)
+		protected virtual void OnDismemberStateChanged(BodyPart bodyPart, bool isDismembered)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		private void OnMangledStateChanged(BodyPart bodyPart, bool isMangled)
 		{
-			throw new NotImplementedException();
+			// throw new NotImplementedException();
 		}
 
 		#endregion

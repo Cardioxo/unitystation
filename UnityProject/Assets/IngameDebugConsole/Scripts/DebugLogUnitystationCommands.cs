@@ -9,6 +9,7 @@ using Mirror;
 using UnityEditor;
 using Random = UnityEngine.Random;
 using DatabaseAPI;
+using Health;
 
 namespace IngameDebugConsole
 {
