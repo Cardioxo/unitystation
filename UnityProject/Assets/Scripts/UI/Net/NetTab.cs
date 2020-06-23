@@ -26,6 +26,7 @@ public enum NetTabType
 	Photocopier = 16,
 	ExosuitFabricator = 17,
 	Autolathe = 18,
+	Surgery = 19,
 	//add your tabs here
 }
 
